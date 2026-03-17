@@ -115,22 +115,12 @@ function HuntGuide({ onClose }) {
 }
 
 // ── Default data ───────────────────────────────────────────────────────────
-const DEFAULT_DEBTS = [
-  { id: 1, name: 'Klarna', balance: 4200, interest_rate: 29.9, min_payment: 300, paid_off: false },
-  { id: 2, name: 'Mastercard', balance: 18500, interest_rate: 22.5, min_payment: 500, paid_off: false },
-  { id: 3, name: 'Konsumentlån', balance: 45000, interest_rate: 8.9, min_payment: 1200, paid_off: false },
-]
-const DEFAULT_SUBS = [
-  { id: 1, name: 'Netflix', cost: 149, active: true },
-  { id: 2, name: 'Spotify', cost: 119, active: true },
-  { id: 3, name: 'HBO Max', cost: 99, active: true },
-  { id: 4, name: 'iCloud+', cost: 39, active: true },
-  { id: 5, name: 'Gym (används ej)', cost: 349, active: true },
-]
+const DEFAULT_DEBTS = []
+const DEFAULT_SUBS = []
 const DEFAULT_BUCKETS = [
-  { type: 'pension', label: 'Pension & Investeringar', emoji: '🌲', color: '#40916C', current: 45000, goal: 500000 },
-  { type: 'buffert', label: 'Buffert', emoji: '🛡️', color: '#2D6A8F', current: 12000, goal: 50000 },
-  { type: 'drom', label: 'Drömhinken', emoji: '⭐', color: '#C77B2A', current: 8000, goal: 80000 },
+  { type: 'pension', label: 'Pension & Investeringar', emoji: '🌲', color: '#40916C', current: 0, goal: 500000 },
+  { type: 'buffert', label: 'Buffert', emoji: '🛡️', color: '#2D6A8F', current: 0, goal: 50000 },
+  { type: 'drom', label: 'Drömhinken', emoji: '⭐', color: '#C77B2A', current: 0, goal: 80000 },
 ]
 
 function lsGet(key, fallback) {
@@ -502,9 +492,15 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
         )}
 
         {activeTab === 'dashboard' && (
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
+          <div style={{ textAlign: 'center', marginTop: 8, display: 'flex', justifyContent: 'center', gap: 16 }}>
             <button onClick={() => setShowResetConfirm(true)} style={{ background: 'none', border: 'none', fontSize: 11, color: C.border, cursor: 'pointer', padding: '4px 8px' }}>
               Rensa all data
+            </button>
+            <button
+              onClick={() => { try { localStorage.removeItem('dh_skipped_landing') } catch {} window.location.reload() }}
+              style={{ background: 'none', border: 'none', fontSize: 11, color: C.border, cursor: 'pointer', padding: '4px 8px' }}
+            >
+              Visa startsidan
             </button>
           </div>
         )}
