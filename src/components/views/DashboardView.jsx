@@ -3,7 +3,7 @@ import { Icon } from '../ui/Icon';
 import { formatSEK, monthsToText } from '../../utils/math';
 
 export const DashboardView = ({
-    debts, subscriptions, extraPayment, monthlyIncome, dolpPlan, totalDebt,
+    debts, subscriptions, extraPayment, monthlyIncome, totalDebt,
     debtFreeMonths, consolidationUnlocked, setExtraPayment, setMonthlyIncome, setActiveTab
   }) => {
     const { S, C } = useTheme();

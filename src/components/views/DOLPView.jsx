@@ -9,6 +9,7 @@ export const DOLPView = ({
 }) => {
   const { S, C } = useTheme();
   const sorted = calculateDOLPOrder(debts);
+  const paidDebts = debts.filter(d => d.paid_off);
 
   return (
     <div>
@@ -38,6 +39,13 @@ export const DOLPView = ({
       </div>
 
       <div style={{ marginTop: 24 }}>
+        {sorted.length === 0 && paidDebts.length === 0 && (
+          <div style={{ ...S.card, textAlign: 'center', padding: '32px 20px' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🎯</div>
+            <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18, color: C.textPrimary, marginBottom: 8 }}>Inga skulder tillagda ännu</div>
+            <div style={{ fontSize: 13, color: C.textSecondary }}>Lägg till dina skulder nedan för att starta DOLP-planen.</div>
+          </div>
+        )}
         {sorted.map((debt, index) => {
           const isActive = index === 0;
           const plan = dolpPlan ? dolpPlan.history.find(h => h.id === debt.id) : null;
@@ -91,6 +99,29 @@ export const DOLPView = ({
         <button onClick={() => setShowAddForm(true)} style={{ ...S.btn("primary"), width: "100%", justifyContent: "center", padding: 14, fontSize: 15 }}>
           + Lägg till skuld
         </button>
+
+        {paidDebts.length > 0 && (
+          <div style={{ marginTop: 28 }}>
+            <div style={{ fontSize: 12, color: '#40916C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>✅</span> Avbetalade skulder ({paidDebts.length})
+            </div>
+            {paidDebts.map(debt => (
+              <div key={debt.id} style={{ background: '#40916C0C', borderRadius: 12, padding: '12px 14px', marginBottom: 8, border: '1px solid #40916C30', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 20 }}>🔥</span>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: C.textSecondary, textDecoration: 'line-through' }}>{debt.name}</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ fontSize: 14, color: '#40916C', fontWeight: 600 }}>{formatSEK(debt.balance)} ✓</div>
+                  <button
+                    style={{ ...S.btn("ghost"), padding: "4px 8px", fontSize: 11 }}
+                    onClick={() => setDebts(p => p.map(d => d.id === debt.id ? { ...d, paid_off: false } : d))}
+                  >Ångra</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
