@@ -2,11 +2,11 @@ import { useTheme } from '../../context/ThemeContext';
 import { Icon } from '../ui/Icon';
 
 export const CoachView = ({
-  chatMessages, chatInput, setChatInput, sendMessage, chatEndRef, isChatLoading
+  chatMessages, chatInput, setChatInput, sendMessage, chatEndRef, isChatLoading, isDesktop
 }) => {
   const { S, C } = useTheme();
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 150px)" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: `calc(100dvh - ${isDesktop ? 150 : 300}px)` }}>
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: "#4A9ECC" }}>Ekonomicoach 🤖</div>
         <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>Baserad på David Bachs principer</div>

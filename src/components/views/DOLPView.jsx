@@ -4,7 +4,7 @@ import { formatSEK, calculateDOLPOrder, monthsToText } from '../../utils/math';
 
 export const DOLPView = ({
   debts, setDebts, totalDebt, debtFreeMonths, extraPayment, setExtraPayment,
-  dolpPlan, editDebtId, setEditDebtId, editDebt, setEditDebt,
+  monthlyIncome, dolpPlan, editDebtId, setEditDebtId, editDebt, setEditDebt,
   saveDebt, setDeleteDebtId, setShowAddForm
 }) => {
   const { S, C } = useTheme();
@@ -30,7 +30,7 @@ export const DOLPView = ({
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: "#F4A261" }}>{formatSEK(extraPayment)}</div>
         </div>
         <input
-          type="range" min="0" max="10000" step="100"
+          type="range" min="0" max={Math.max(extraPayment, Math.round(monthlyIncome * 0.5))} step="100"
           value={extraPayment}
           onChange={(e) => setExtraPayment(Number(e.target.value))}
           style={{ width: "100%", accentColor: "#F4A261", height: 6, borderRadius: 6 }}

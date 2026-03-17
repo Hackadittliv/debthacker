@@ -212,7 +212,8 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   // ── Supabase sync ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!user) return
-    supabase.from('dh_user_data').select('data').eq('user_id', user.id).single().then(({ data }) => {
+    supabase.from('dh_user_data').select('data').eq('user_id', user.id).single().then(({ data, error }) => {
+      if (error && error.code !== 'PGRST116') return // PGRST116 = no rows, expected for new users
       if (!data?.data) {
         // Första inloggning — spara lokal data direkt till molnet
         supabase.from('dh_user_data').upsert({
@@ -260,6 +261,12 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   useEffect(() => {
     if (fullyProven && !consolidationUnlocked) setShowUnlockCeremony(true)
   }, [fullyProven, consolidationUnlocked])
+
+  // ── Clamp extraPayment om inkomsten sänks ────────────────────────────────
+  useEffect(() => {
+    const max = Math.round(monthlyIncome * 0.5)
+    if (extraPayment > max) setExtraPayment(max)
+  }, [monthlyIncome]) // eslint-disable-line
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const addDebt = () => {
@@ -403,9 +410,9 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
         {activeTab === 'dashboard' && (
           <DashboardView
             debts={debts}
+            subscriptions={subscriptions}
             extraPayment={extraPayment}
             monthlyIncome={monthlyIncome}
-            dolpPlan={dolpPlan}
             totalDebt={totalDebt}
             debtFreeMonths={debtFreeMonths}
             consolidationUnlocked={consolidationUnlocked}
@@ -422,6 +429,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             debtFreeMonths={debtFreeMonths}
             extraPayment={extraPayment}
             setExtraPayment={setExtraPayment}
+            monthlyIncome={monthlyIncome}
             dolpPlan={dolpPlan}
             editDebtId={editDebtId}
             setEditDebtId={setEditDebtId}
@@ -479,6 +487,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             sendMessage={sendMessage}
             chatEndRef={chatEndRef}
             isChatLoading={isChatLoading}
+            isDesktop={isDesktop}
           />
         )}
         {activeTab === 'progress' && (

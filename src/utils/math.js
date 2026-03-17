@@ -51,7 +51,7 @@ export function calculatePayoffPlan(debts, extraPayment) {
 }
 
 export function monthsToText(m) {
-  if (m === 0) return "0 mån";
+  if (!m || m <= 0) return "0 mån";
   if (m >= 1200) return "100+ år";
   const y = Math.floor(m / 12);
   const mo = Math.round(m % 12);
@@ -61,7 +61,9 @@ export function monthsToText(m) {
 }
 
 export function formatSEK(n) {
+  if (typeof n !== "number" || isNaN(n)) return "0 kr";
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M kr`;
+  if (n < 0) return `-${Math.round(-n).toLocaleString("sv-SE")} kr`;
   return `${Math.round(n).toLocaleString("sv-SE")} kr`;
 }
 

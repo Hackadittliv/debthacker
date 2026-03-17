@@ -3,11 +3,13 @@ import { Icon } from '../ui/Icon';
 import { formatSEK, monthsToText } from '../../utils/math';
 
 export const DashboardView = ({
-    debts, extraPayment, monthlyIncome, dolpPlan, totalDebt,
+    debts, subscriptions, extraPayment, monthlyIncome, dolpPlan, totalDebt,
     debtFreeMonths, consolidationUnlocked, setExtraPayment, setMonthlyIncome, setActiveTab
   }) => {
     const { S, C } = useTheme();
     const activeDebts = debts.filter(d => !d.paid_off).length;
+    const activeCost = subscriptions.filter(s => s.active).reduce((sum, s) => sum + s.cost, 0);
+    const monthlySavingsGoal = Math.round(monthlyIncome * 0.2);
 
     return (
       <div>
@@ -28,17 +30,19 @@ export const DashboardView = ({
           <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>{consolidationUnlocked ? '🔓' : '🔒'}</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Samlånslåset</div>
-            <div style={{ ...S.bigNum(C.textSecondary), fontSize: 34 }}>0%</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: consolidationUnlocked ? '#40916C' : C.textSecondary, marginTop: 6 }}>
+              {consolidationUnlocked ? 'Upplåst' : 'Låst'}
+            </div>
           </div>
           <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>🪣</div>
-            <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Sparande/mån</div>
-            <div style={{ ...S.bigNum("#40916C"), fontSize: 24, letterSpacing: -0.5 }}>9k kr</div>
+            <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Sparmål/mån</div>
+            <div style={{ ...S.bigNum("#40916C"), fontSize: 24, letterSpacing: -0.5 }}>{formatSEK(monthlySavingsGoal)}</div>
           </div>
           <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>📱</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Prenumerationer</div>
-            <div style={{ ...S.bigNum("#E63946"), fontSize: 24, letterSpacing: -0.5 }}>1k kr<span style={{ fontSize: 15, color: C.textSecondary, fontFamily: "'DM Sans', sans-serif" }}>/mån</span></div>
+            <div style={{ ...S.bigNum("#E63946"), fontSize: 24, letterSpacing: -0.5 }}>{formatSEK(activeCost)}<span style={{ fontSize: 15, color: C.textSecondary, fontFamily: "'DM Sans', sans-serif" }}>/mån</span></div>
           </div>
         </div>
 
