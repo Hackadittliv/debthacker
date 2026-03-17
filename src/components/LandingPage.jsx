@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { supabase } from '../supabase.js';
 
 // Simple animated counter hook
 function useCounter(target, duration = 1800) {
@@ -87,11 +88,31 @@ function Step({ num, title, desc, accent }) {
 export function LandingPage({ onStart }) {
   const { C, isDark } = useTheme();
   const [showFomo, setShowFomo] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   useEffect(() => {
     const t = setTimeout(() => setShowFomo(true), 4000);
     return () => clearTimeout(t);
   }, []);
+
+  const handleEmailStart = async () => {
+    const trimmed = email.trim();
+    if (!trimmed) { onStart(); return; }
+    if (!/\S+@\S+\.\S+/.test(trimmed)) { setEmailError('Ange en giltig e-postadress'); return; }
+    setEmailLoading(true);
+    setEmailError('');
+    const { error } = await supabase.auth.signInWithOtp({
+      email: trimmed,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setEmailLoading(false);
+    if (error) { setEmailError('Något gick fel. Försök igen.'); return; }
+    setEmailSent(true);
+    setTimeout(() => onStart(), 1800);
+  };
 
   const maxW = 680;
 
@@ -157,24 +178,48 @@ export function LandingPage({ onStart }) {
             DebtHacker visar dig den exakta vägen ut — med David Bachs beprövade DOLP-metod.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <button
-              onClick={onStart}
-              style={{
-                background: 'linear-gradient(135deg, #F4A261, #E8833A)',
-                color: '#0D1117', border: 'none', borderRadius: 14,
-                padding: '17px 36px', fontSize: 17, fontWeight: 800,
-                cursor: 'pointer', letterSpacing: -0.3,
-                boxShadow: '0 8px 32px #F4A26140',
-                transition: 'transform 0.15s, box-shadow 0.15s',
-              }}
-              onMouseEnter={e => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 12px 40px #F4A26160'; }}
-              onMouseLeave={e => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 8px 32px #F4A26140'; }}
-            >
-              Hacka mina skulder nu →
-            </button>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>100% gratis · Sparas lokalt · Ingen spam</span>
-          </div>
+          {emailSent ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>📬</div>
+              <div style={{ fontSize: 15, color: '#fff', fontWeight: 600, marginBottom: 4 }}>Kolla din mejl!</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Vi skickade en inloggningslänk. Tar dig till appen nu...</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%', maxWidth: 420 }}>
+              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                <input
+                  type="email"
+                  placeholder="din@mejl.se (valfritt)"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setEmailError(''); }}
+                  onKeyDown={e => e.key === 'Enter' && handleEmailStart()}
+                  style={{
+                    flex: 1, padding: '14px 16px',
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: 12, fontSize: 15, color: '#fff', outline: 'none',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                />
+                <button
+                  onClick={handleEmailStart}
+                  disabled={emailLoading}
+                  style={{
+                    background: 'linear-gradient(135deg, #F4A261, #E8833A)',
+                    color: '#0D1117', border: 'none', borderRadius: 12,
+                    padding: '14px 22px', fontSize: 15, fontWeight: 800,
+                    cursor: emailLoading ? 'wait' : 'pointer', whiteSpace: 'nowrap',
+                    boxShadow: '0 6px 24px #F4A26145',
+                  }}
+                >
+                  {emailLoading ? '...' : 'Starta →'}
+                </button>
+              </div>
+              {emailError && <div style={{ fontSize: 12, color: '#F4A261' }}>{emailError}</div>}
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
+                100% gratis · Ingen spam · <span style={{ cursor: 'pointer', textDecoration: 'underline', color: 'rgba(255,255,255,0.4)' }} onClick={onStart}>Hoppa över, starta utan konto</span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

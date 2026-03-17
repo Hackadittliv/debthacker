@@ -100,7 +100,46 @@ export const ConsolidationView = ({
         )}
       </div>
 
-      <button onClick={() => setActiveTab("coach")} style={{ ...S.btn("primary"), width: "100%", justifyContent: "center", padding: 14, background: "#2D6A8F", color: "#fff" }}>
+      {/* ── Affiliate-partners ── */}
+      <div style={{ marginTop: 20, marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 700, marginBottom: 10 }}>
+          Jämför samlingslån hos våra partners
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            { name: "Zmarta", desc: "Jämför upp till 40 banker — en ansökan", badge: "Populärast", color: "#40916C", url: "https://www.zmarta.se/lan/samlingslaan?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
+            { name: "Lendo", desc: "Utan UC-förfrågan · Svar på 1 minut", badge: "Snabbast", color: "#4A9ECC", url: "https://www.lendo.se/samla-lan?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
+            { name: "Brocc", desc: "P2P-lån med låg ränta · Etisk bank", badge: "Lägst ränta", color: "#C77B2A", url: "https://www.brocc.se?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
+          ].map(p => (
+            <a
+              key={p.name}
+              href={p.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              style={{
+                display: "flex", alignItems: "center", gap: 14,
+                background: C.bgCard, border: `1px solid ${p.color}30`,
+                borderRadius: 12, padding: "14px 16px", textDecoration: "none",
+                borderLeft: `3px solid ${p.color}`,
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: C.textPrimary }}>{p.name}</span>
+                  <span style={{ fontSize: 10, background: `${p.color}20`, color: p.color, borderRadius: 6, padding: "2px 7px", fontWeight: 700, letterSpacing: 0.3 }}>{p.badge}</span>
+                </div>
+                <div style={{ fontSize: 12, color: C.textSecondary }}>{p.desc}</div>
+              </div>
+              <div style={{ fontSize: 18, color: p.color }}>→</div>
+            </a>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: C.textDim, marginTop: 8, lineHeight: 1.6 }}>
+          * Dessa är affiliatelänkar — DebtHacker kan få ersättning om du ansöker. Det kostar dig inget extra och påverkar inte vår rekommendation.
+        </div>
+      </div>
+
+      <button onClick={() => setActiveTab("coach")} style={{ ...S.btn("primary"), width: "100%", justifyContent: "center", padding: 14, background: "#2D6A8F", color: "#fff", marginTop: 16 }}>
         Be coachen hjälpa dig ansöka
       </button>
     </div>
