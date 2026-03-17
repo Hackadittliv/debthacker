@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import DebtHacker from './DebtHacker.jsx'
 import { supabase } from './supabase.js'
 import { ThemeProvider, useTheme } from './context/ThemeContext.jsx'
+import { LandingPage } from './components/LandingPage.jsx'
 
 const TABS = [
   { id: 'dashboard',    label: 'Översikt', emoji: '🏠' },
@@ -343,10 +344,25 @@ function AppShell() {
   )
 }
 
+function AppRoot() {
+  const [showApp, setShowApp] = useState(() => {
+    // If user previously clicked "start", skip landing page
+    try { return localStorage.getItem('dh_skipped_landing') === '1' } catch { return false }
+  })
+
+  const handleStart = () => {
+    try { localStorage.setItem('dh_skipped_landing', '1') } catch {}
+    setShowApp(true)
+  }
+
+  if (!showApp) return <LandingPage onStart={handleStart} />
+  return <AppShell />
+}
+
 export default function App() {
   return (
     <ThemeProvider>
-      <AppShell />
+      <AppRoot />
     </ThemeProvider>
   )
 }
