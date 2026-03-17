@@ -114,6 +114,17 @@ function HuntGuide({ onClose }) {
   )
 }
 
+// ── Debt types ─────────────────────────────────────────────────────────────
+const DEBT_TYPES = [
+  { value: '', label: 'Välj typ (valfritt)', emoji: '' },
+  { value: 'kreditkort', label: 'Kreditkort', emoji: '💳' },
+  { value: 'csn', label: 'CSN-lån', emoji: '📚' },
+  { value: 'konsument', label: 'Konsumentlån', emoji: '💰' },
+  { value: 'bil', label: 'Billån', emoji: '🚗' },
+  { value: 'bostad', label: 'Bostadslån/Bolån', emoji: '🏠' },
+  { value: 'ovrig', label: 'Övrigt', emoji: '📄' },
+]
+
 // ── Default data ───────────────────────────────────────────────────────────
 const DEFAULT_DEBTS = []
 const DEFAULT_SUBS = []
@@ -149,9 +160,9 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
   // Edit state
-  const [newDebt, setNewDebt] = useState({ name: '', balance: '', interest_rate: '', min_payment: '' })
+  const [newDebt, setNewDebt] = useState({ name: '', balance: '', interest_rate: '', min_payment: '', type: '' })
   const [editDebtId, setEditDebtId] = useState(null)
-  const [editDebt, setEditDebt] = useState({ name: '', balance: '', interest_rate: '', min_payment: '' })
+  const [editDebt, setEditDebt] = useState({ name: '', balance: '', interest_rate: '', min_payment: '', type: '' })
   const [showSubForm, setShowSubForm] = useState(false)
   const [newSub, setNewSub] = useState({ name: '', cost: '' })
   const [editSubId, setEditSubId] = useState(null)
@@ -261,14 +272,14 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   // ── Handlers ─────────────────────────────────────────────────────────────
   const addDebt = () => {
     if (!newDebt.name || !newDebt.balance) return
-    setDebts(p => [...p, { id: Date.now(), name: newDebt.name, balance: parseFloat(newDebt.balance), interest_rate: parseFloat(newDebt.interest_rate) || 0, min_payment: parseFloat(newDebt.min_payment) || 200, paid_off: false }])
-    setNewDebt({ name: '', balance: '', interest_rate: '', min_payment: '' })
+    setDebts(p => [...p, { id: Date.now(), name: newDebt.name, balance: parseFloat(newDebt.balance), interest_rate: parseFloat(newDebt.interest_rate) || 0, min_payment: parseFloat(newDebt.min_payment) || 200, type: newDebt.type || '', paid_off: false }])
+    setNewDebt({ name: '', balance: '', interest_rate: '', min_payment: '', type: '' })
     setShowAddDebtForm(false)
   }
 
   const saveDebt = () => {
     if (!editDebt.name || !editDebt.balance) return
-    setDebts(p => p.map(d => d.id === editDebtId ? { ...d, name: editDebt.name, balance: parseFloat(editDebt.balance), interest_rate: parseFloat(editDebt.interest_rate) || 0, min_payment: parseFloat(editDebt.min_payment) || 200 } : d))
+    setDebts(p => p.map(d => d.id === editDebtId ? { ...d, name: editDebt.name, balance: parseFloat(editDebt.balance), interest_rate: parseFloat(editDebt.interest_rate) || 0, min_payment: parseFloat(editDebt.min_payment) || 200, type: editDebt.type || '' } : d))
     setEditDebtId(null)
   }
 
@@ -353,10 +364,24 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
         <div style={overlayStyle}>
           <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 24, maxWidth: 360, width: '100%' }}>
             <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, color: '#F4A261', marginBottom: 16 }}>Lägg till skuld</div>
-            <input style={{ ...S.input, marginBottom: 8 }} placeholder="Namn (t.ex. Klarna)" value={newDebt.name} onChange={e => setNewDebt(p => ({ ...p, name: e.target.value }))} />
-            <input style={{ ...S.input, marginBottom: 8 }} type="number" placeholder="Saldo (kr)" value={newDebt.balance} onChange={e => setNewDebt(p => ({ ...p, balance: e.target.value }))} />
-            <input style={{ ...S.input, marginBottom: 8 }} type="number" placeholder="Ränta (%)" value={newDebt.interest_rate} onChange={e => setNewDebt(p => ({ ...p, interest_rate: e.target.value }))} />
-            <input style={{ ...S.input, marginBottom: 16 }} type="number" placeholder="Minbetalning (kr)" value={newDebt.min_payment} onChange={e => setNewDebt(p => ({ ...p, min_payment: e.target.value }))} />
+            <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Namn</div>
+            <input style={{ ...S.input, marginBottom: 10 }} placeholder="t.ex. Klarna" value={newDebt.name} onChange={e => setNewDebt(p => ({ ...p, name: e.target.value }))} />
+            <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Skuld-typ</div>
+            <select value={newDebt.type} onChange={e => setNewDebt(p => ({ ...p, type: e.target.value }))} style={{ ...S.input, marginBottom: 10, cursor: 'pointer' }}>
+              {DEBT_TYPES.map(t => <option key={t.value} value={t.value}>{t.emoji ? `${t.emoji} ` : ''}{t.label}</option>)}
+            </select>
+            <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Nuvarande saldo (kr)</div>
+            <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={newDebt.balance} onChange={e => setNewDebt(p => ({ ...p, balance: e.target.value }))} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Ränta (%)</div>
+                <input style={S.input} type="number" placeholder="0" value={newDebt.interest_rate} onChange={e => setNewDebt(p => ({ ...p, interest_rate: e.target.value }))} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Minbetalning (kr)</div>
+                <input style={S.input} type="number" placeholder="200" value={newDebt.min_payment} onChange={e => setNewDebt(p => ({ ...p, min_payment: e.target.value }))} />
+              </div>
+            </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button style={{ ...S.btn('primary'), flex: 1, justifyContent: 'center' }} onClick={addDebt}><Icon name="check" size={13} color="#0D1117" />Spara</button>
               <button style={{ ...S.btn('ghost'), flex: 1, justifyContent: 'center' }} onClick={() => setShowAddDebtForm(false)}>Avbryt</button>
@@ -434,6 +459,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
           <ConsolidationView
             consolidationUnlocked={consolidationUnlocked}
             behaviorProof={behaviorProof}
+            setBehaviorProof={setBehaviorProof}
             debts={debts}
             extraPayment={extraPayment}
             consolidationRate={consolidationRate}

@@ -3,14 +3,35 @@ import { Icon } from '../ui/Icon';
 import { formatSEK, calculatePayoffPlan } from '../../utils/math';
 
 export const ConsolidationView = ({
-  consolidationUnlocked, behaviorProof, debts, extraPayment,
+  consolidationUnlocked, behaviorProof, setBehaviorProof, debts, extraPayment,
   consolidationRate, setConsolidationRate, setActiveTab
 }) => {
   const { S, C } = useTheme();
   const lockTasks = [
-    { id: "noCreditDays", label: "Tid utan nya krediter", progress: `${behaviorProof.noCreditDays}/30 dgr`, done: behaviorProof.noCreditDays >= 30 },
-    { id: "extraPayments", label: "Gjorda extra amorteringar", progress: `${behaviorProof.extraPayments}/2 st`, done: behaviorProof.extraPayments >= 2 },
-    { id: "cardClosed", label: "Kreditkort uppsagt/klippt", progress: behaviorProof.cardClosed ? "Klar" : "Väntar", done: behaviorProof.cardClosed },
+    {
+      id: "cardClosed",
+      label: "Kreditkort uppsagt/klippt",
+      progress: behaviorProof.cardClosed ? "Klar ✓" : "Väntar",
+      done: behaviorProof.cardClosed,
+      btnLabel: "Bekräfta — jag har klippt kortet",
+      onAction: () => setBehaviorProof(p => ({ ...p, cardClosed: true })),
+    },
+    {
+      id: "extraPayments",
+      label: "Gjorda extra amorteringar",
+      progress: `${behaviorProof.extraPayments}/2 st`,
+      done: behaviorProof.extraPayments >= 2,
+      btnLabel: "+ Registrera en extra amortering",
+      onAction: () => setBehaviorProof(p => ({ ...p, extraPayments: Math.min(2, p.extraPayments + 1) })),
+    },
+    {
+      id: "noCreditDays",
+      label: "Dagar utan ny kredit",
+      progress: `${behaviorProof.noCreditDays}/30 dgr`,
+      done: behaviorProof.noCreditDays >= 30,
+      btnLabel: "+ 5 dagar utan ny kredit",
+      onAction: () => setBehaviorProof(p => ({ ...p, noCreditDays: Math.min(30, p.noCreditDays + 5) })),
+    },
   ];
 
   if (!consolidationUnlocked) {
@@ -25,21 +46,31 @@ export const ConsolidationView = ({
             <Icon name="brain" size={20} color="#F4A261" />
             <div style={{ fontSize: 15, fontWeight: 600, color: "#F4A261" }}>Skuldhackaren säger:</div>
           </div>
-          <div style={{ fontSize: 13, color: C.textNear, lineHeight: 1.5, marginBottom: 15 }}>
+          <div style={{ fontSize: 13, color: C.textNear, lineHeight: 1.5 }}>
             "Ett samlingslån är livsfarligt om du inte först ändrat orsaken till lånen. Annars har du snart det stora samlånet PLUS nya småkrediter."
           </div>
         </div>
 
         <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, marginTop: 20 }}>Beteendekrav för upplåsning:</div>
         {lockTasks.map(t => (
-          <div key={t.id} style={{ ...S.card, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: t.done ? 0.6 : 1, border: t.done ? "1px solid #40916C" : `1px solid ${C.border}` }}>
-            <div style={S.row}>
-              <div style={{ width: 20, height: 20, borderRadius: "50%", background: t.done ? "#40916C" : C.bgSunken, border: t.done ? "none" : `2px solid ${C.borderStrong}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {t.done && <Icon name="check" size={12} color="#fff" />}
+          <div key={t.id} style={{ ...S.card, padding: '14px 16px', marginBottom: 10, border: t.done ? "1px solid #40916C" : `1px solid ${C.border}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: t.done ? 0 : 10 }}>
+              <div style={S.row}>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", background: t.done ? "#40916C" : C.bgSunken, border: t.done ? "none" : `2px solid ${C.borderStrong}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {t.done && <Icon name="check" size={12} color="#fff" />}
+                </div>
+                <div style={{ fontSize: 14, color: t.done ? C.textSecondary : C.textPrimary, textDecoration: t.done ? 'line-through' : 'none' }}>{t.label}</div>
               </div>
-              <div style={{ fontSize: 14 }}>{t.label}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: t.done ? "#40916C" : C.textSecondary }}>{t.progress}</div>
             </div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: t.done ? "#40916C" : C.textSecondary }}>{t.progress}</div>
+            {!t.done && (
+              <button
+                onClick={t.onAction}
+                style={{ width: "100%", background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 9, padding: "9px 12px", fontSize: 13, fontWeight: 600, color: C.textNear, cursor: "pointer", textAlign: "center" }}
+              >
+                {t.btnLabel}
+              </button>
+            )}
           </div>
         ))}
       </div>

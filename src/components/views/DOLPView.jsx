@@ -2,6 +2,17 @@ import { useTheme } from '../../context/ThemeContext';
 import { Icon } from '../ui/Icon';
 import { formatSEK, calculateDOLPOrder, monthsToText } from '../../utils/math';
 
+const DEBT_TYPES = [
+  { value: '', label: 'Välj typ (valfritt)', emoji: '' },
+  { value: 'kreditkort', label: 'Kreditkort', emoji: '💳' },
+  { value: 'csn', label: 'CSN-lån', emoji: '📚' },
+  { value: 'konsument', label: 'Konsumentlån', emoji: '💰' },
+  { value: 'bil', label: 'Billån', emoji: '🚗' },
+  { value: 'bostad', label: 'Bostadslån/Bolån', emoji: '🏠' },
+  { value: 'ovrig', label: 'Övrigt', emoji: '📄' },
+];
+const TYPE_EMOJI = Object.fromEntries(DEBT_TYPES.filter(t => t.value).map(t => [t.value, t.emoji]));
+
 export const DOLPView = ({
   debts, setDebts, totalDebt, debtFreeMonths, extraPayment, setExtraPayment,
   monthlyIncome, dolpPlan, editDebtId, setEditDebtId, editDebt, setEditDebt,
@@ -55,10 +66,32 @@ export const DOLPView = ({
               {isActive && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #40916C, #F4A261)", borderRadius: "12px 12px 0 0" }} />}
               {editDebtId === debt.id ? (
                 <div>
-                  <input style={{ ...S.input, marginBottom: 7 }} placeholder="Namn" value={editDebt.name} onChange={e => setEditDebt(p => ({ ...p, name: e.target.value }))} />
-                  <input style={{ ...S.input, marginBottom: 7 }} type="number" placeholder="Saldo (kr)" value={editDebt.balance} onChange={e => setEditDebt(p => ({ ...p, balance: e.target.value }))} />
-                  <input style={{ ...S.input, marginBottom: 7 }} type="number" placeholder="Ränta (%)" value={editDebt.interest_rate} onChange={e => setEditDebt(p => ({ ...p, interest_rate: e.target.value }))} />
-                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="Minbetalning (kr)" value={editDebt.min_payment} onChange={e => setEditDebt(p => ({ ...p, min_payment: e.target.value }))} />
+                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Namn</div>
+                  <input style={{ ...S.input, marginBottom: 10 }} placeholder="t.ex. Klarna" value={editDebt.name} onChange={e => setEditDebt(p => ({ ...p, name: e.target.value }))} />
+
+                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Skuld-typ</div>
+                  <select
+                    value={editDebt.type || ''}
+                    onChange={e => setEditDebt(p => ({ ...p, type: e.target.value }))}
+                    style={{ ...S.input, marginBottom: 10, cursor: 'pointer' }}
+                  >
+                    {DEBT_TYPES.map(t => <option key={t.value} value={t.value}>{t.emoji ? `${t.emoji} ` : ''}{t.label}</option>)}
+                  </select>
+
+                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Nuvarande saldo (kr)</div>
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editDebt.balance} onChange={e => setEditDebt(p => ({ ...p, balance: e.target.value }))} />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                    <div>
+                      <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Ränta (%)</div>
+                      <input style={S.input} type="number" placeholder="0" value={editDebt.interest_rate} onChange={e => setEditDebt(p => ({ ...p, interest_rate: e.target.value }))} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Minbetalning (kr)</div>
+                      <input style={S.input} type="number" placeholder="200" value={editDebt.min_payment} onChange={e => setEditDebt(p => ({ ...p, min_payment: e.target.value }))} />
+                    </div>
+                  </div>
+
                   <div style={S.row}>
                     <button style={S.btn("primary")} onClick={saveDebt}><Icon name="check" size={13} color="#0D1117" />Spara</button>
                     <button style={S.btn("ghost")} onClick={() => setEditDebtId(null)}>Avbryt</button>
@@ -70,7 +103,9 @@ export const DOLPView = ({
                     <div style={S.row}>
                       <span style={{ fontSize: 14 + intensity * 16, filter: isActive ? "drop-shadow(0 0 5px #F4A261)" : "none", animation: isActive ? "flamePulse 1.5s ease-in-out infinite" : "none" }}>🔥</span>
                       <div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: isActive ? C.textPrimary : C.textNear }}>{debt.name}</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: isActive ? C.textPrimary : C.textNear }}>
+                          {debt.type && TYPE_EMOJI[debt.type] ? <span style={{ marginRight: 5 }}>{TYPE_EMOJI[debt.type]}</span> : null}{debt.name}
+                        </div>
                         {isActive && <span style={{ ...S.badge("#40916C"), animation: "badgePulse 2s ease infinite" }}>NÄSTA</span>}
                       </div>
                     </div>
@@ -86,7 +121,7 @@ export const DOLPView = ({
                     <div style={{ fontSize: 13, color: C.textMuted }}>Min: {formatSEK(debt.min_payment)}/mån</div>
                     <div style={{ fontSize: 13, fontWeight: 500, color: isActive ? "#40916C" : C.textSecondary }}>{plan ? monthsToText(plan.months_to_payoff) : "–"}</div>
                     <div style={S.row}>
-                      <button style={{ ...S.btn("ghost"), padding: "5px 8px" }} onClick={() => { setEditDebtId(debt.id); setEditDebt({ name: debt.name, balance: debt.balance, interest_rate: debt.interest_rate, min_payment: debt.min_payment }); }}><Icon name="pencil" size={12} color={C.textSecondary} /></button>
+                      <button style={{ ...S.btn("ghost"), padding: "5px 8px" }} onClick={() => { setEditDebtId(debt.id); setEditDebt({ name: debt.name, balance: debt.balance, interest_rate: debt.interest_rate, min_payment: debt.min_payment, type: debt.type || '' }); }}><Icon name="pencil" size={12} color={C.textSecondary} /></button>
                       <button style={{ ...S.btn("success"), padding: "5px 8px" }} onClick={() => setDebts(p => p.map(d => d.id === debt.id ? { ...d, paid_off: true } : d))}><Icon name="check" size={12} color="#fff" /></button>
                       <button style={{ ...S.btn("danger"), padding: "5px 8px" }} onClick={() => setDeleteDebtId(debt.id)}><Icon name="trash" size={12} color="#fff" /></button>
                     </div>

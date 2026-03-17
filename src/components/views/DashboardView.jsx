@@ -22,28 +22,28 @@ export const DashboardView = ({
         </div>
 
         <div style={{ ...S.g2, marginBottom: 12 }}>
-          <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
+          <button className="card-clickable" onClick={() => setActiveTab('dolp')} style={{ ...S.card, marginBottom: 0, minHeight: 110, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>🔥</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Aktiva skulder</div>
             <div style={{ ...S.bigNum("#F4A261"), fontSize: 34 }}>{activeDebts}</div>
-          </div>
-          <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
+          </button>
+          <button className="card-clickable" onClick={() => setActiveTab('consolidation')} style={{ ...S.card, marginBottom: 0, minHeight: 110, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>{consolidationUnlocked ? '🔓' : '🔒'}</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Samlånslåset</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: consolidationUnlocked ? '#40916C' : C.textSecondary, marginTop: 6 }}>
               {consolidationUnlocked ? 'Upplåst' : 'Låst'}
             </div>
-          </div>
-          <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
+          </button>
+          <button className="card-clickable" onClick={() => setActiveTab('buckets')} style={{ ...S.card, marginBottom: 0, minHeight: 110, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>🪣</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Sparmål/mån</div>
             <div style={{ ...S.bigNum("#40916C"), fontSize: 24, letterSpacing: -0.5 }}>{formatSEK(monthlySavingsGoal)}</div>
-          </div>
-          <div style={{ ...S.card, marginBottom: 0, minHeight: 110 }}>
+          </button>
+          <button className="card-clickable" onClick={() => setActiveTab('subs')} style={{ ...S.card, marginBottom: 0, minHeight: 110, cursor: 'pointer', textAlign: 'left' }}>
             <div style={{ fontSize: 26, marginBottom: 10 }}>📱</div>
             <div style={{ ...S.label, fontSize: 11, fontWeight: 700 }}>Prenumerationer</div>
             <div style={{ ...S.bigNum("#E63946"), fontSize: 24, letterSpacing: -0.5 }}>{formatSEK(activeCost)}<span style={{ fontSize: 15, color: C.textSecondary, fontFamily: "'DM Sans', sans-serif" }}>/mån</span></div>
-          </div>
+          </button>
         </div>
 
         <button
