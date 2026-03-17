@@ -143,7 +143,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
 
   const [debts, setDebts] = useState(() => lsGet('dh_debts', DEFAULT_DEBTS))
   const [extraPayment, setExtraPayment] = useState(() => lsGet('dh_extra', 2000))
-  const [monthlyIncome] = useState(() => lsGet('dh_income', 38000))
+  const [monthlyIncome, setMonthlyIncome] = useState(() => lsGet('dh_income', 38000))
   const [subscriptions, setSubscriptions] = useState(() => lsGet('dh_subs', DEFAULT_SUBS))
   const [buckets, setBuckets] = useState(() => lsGet('dh_buckets', DEFAULT_BUCKETS))
   const [behaviorProof, setBehaviorProof] = useState(() => lsGet('dh_behavior', { cardClosed: false, extraPayments: 0, noCreditDays: 0 }))
@@ -203,6 +203,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   useEffect(() => { localStorage.setItem('dh_debts', JSON.stringify(debts)) }, [debts])
   useEffect(() => { localStorage.setItem('dh_subs', JSON.stringify(subscriptions)) }, [subscriptions])
   useEffect(() => { localStorage.setItem('dh_extra', JSON.stringify(extraPayment)) }, [extraPayment])
+  useEffect(() => { localStorage.setItem('dh_income', JSON.stringify(monthlyIncome)) }, [monthlyIncome])
   useEffect(() => { localStorage.setItem('dh_behavior', JSON.stringify(behaviorProof)) }, [behaviorProof])
   useEffect(() => { localStorage.setItem('dh_consrate', JSON.stringify(consolidationRate)) }, [consolidationRate])
   useEffect(() => { localStorage.setItem('dh_buckets', JSON.stringify(buckets)) }, [buckets])
@@ -212,11 +213,20 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   useEffect(() => {
     if (!user) return
     supabase.from('dh_user_data').select('data').eq('user_id', user.id).single().then(({ data }) => {
-      if (!data?.data) return
+      if (!data?.data) {
+        // Första inloggning — spara lokal data direkt till molnet
+        supabase.from('dh_user_data').upsert({
+          user_id: user.id,
+          data: { debts, subscriptions, extraPayment, monthlyIncome, behaviorProof, consolidationRate, consolidationUnlocked, buckets, achievements },
+          updated_at: new Date().toISOString(),
+        })
+        return
+      }
       const d = data.data
       if (d.debts) setDebts(d.debts)
       if (d.subscriptions) setSubscriptions(d.subscriptions)
       if (d.extraPayment !== undefined) setExtraPayment(d.extraPayment)
+      if (d.monthlyIncome !== undefined) setMonthlyIncome(d.monthlyIncome)
       if (d.behaviorProof) setBehaviorProof(d.behaviorProof)
       if (d.consolidationRate !== undefined) setConsolidationRate(d.consolidationRate)
       if (d.consolidationUnlocked !== undefined) setConsolidationUnlocked(d.consolidationUnlocked)
@@ -283,6 +293,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
     setSubscriptions(DEFAULT_SUBS)
     setBuckets(DEFAULT_BUCKETS)
     setExtraPayment(2000)
+    setMonthlyIncome(38000)
     setBehaviorProof({ cardClosed: false, extraPayments: 0, noCreditDays: 0 })
     setConsolidationRate(8.9)
     setConsolidationUnlocked(false)
@@ -399,6 +410,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             debtFreeMonths={debtFreeMonths}
             consolidationUnlocked={consolidationUnlocked}
             setExtraPayment={setExtraPayment}
+            setMonthlyIncome={setMonthlyIncome}
             setActiveTab={setActiveTab}
           />
         )}

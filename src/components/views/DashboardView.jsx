@@ -4,7 +4,7 @@ import { formatSEK, monthsToText } from '../../utils/math';
 
 export const DashboardView = ({
     debts, extraPayment, monthlyIncome, dolpPlan, totalDebt,
-    debtFreeMonths, consolidationUnlocked, setExtraPayment, setActiveTab
+    debtFreeMonths, consolidationUnlocked, setExtraPayment, setMonthlyIncome, setActiveTab
   }) => {
     const { S, C } = useTheme();
     const activeDebts = debts.filter(d => !d.paid_off).length;
@@ -58,7 +58,16 @@ export const DashboardView = ({
         </button>
 
         <div style={{ ...S.card, marginTop: 12, paddingBottom: 24 }}>
-          <div style={{ ...S.row, justifyContent: "space-between", marginBottom: 20 }}>
+          <div style={{ ...S.row, justifyContent: "space-between", marginBottom: 6 }}>
+            <div style={{ fontSize: 13, color: C.textMuted }}>Din månadsinkomst (netto)</div>
+            <input
+              type="number"
+              value={monthlyIncome}
+              onChange={e => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
+              style={{ background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 8, padding: '4px 10px', fontSize: 14, fontWeight: 600, color: C.textPrimary, width: 110, textAlign: 'right', outline: 'none' }}
+            />
+          </div>
+          <div style={{ ...S.row, justifyContent: "space-between", marginBottom: 14, marginTop: 14 }}>
             <div style={{ fontSize: 15, fontWeight: 600 }}>Extra betalning/mån</div>
             <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: "#F4A261" }}>{formatSEK(extraPayment)}</div>
           </div>
