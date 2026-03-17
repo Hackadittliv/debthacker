@@ -181,7 +181,7 @@ export function LandingPage({ onStart }) {
 
           <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             De flesta betalar skulder i fel ordning och slösar tusentals kronor på onödig ränta.
-            DebtHacker visar dig den exakta vägen ut — med David Bachs beprövade DOLP-metod.
+            DebtHacker visar dig den exakta vägen ut — med den beprövade DOLP-skuldsläckningsmetoden.
           </p>
 
           {emailSent ? (
@@ -264,12 +264,12 @@ export function LandingPage({ onStart }) {
       {/* ── SOLUTION ── */}
       <section style={{ padding: '0 20px 56px', maxWidth: maxW, margin: '0 auto' }}>
         <div style={{ background: 'linear-gradient(135deg, #0A1E10, #161B22)', border: '1px solid #40916C30', borderRadius: 20, padding: '28px 24px' }}>
-          <div style={{ fontSize: 12, color: '#40916C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>DOLP-METODEN</div>
+          <div style={{ fontSize: 12, color: '#40916C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>DOLP-SKULDSLÄCKNINGSMETODEN</div>
           <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: '#FFFFFF', margin: '0 0 8px' }}>
             Minsta skuld först. Bygg <span style={{ color: '#40916C' }}>momentum</span>.
           </h2>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 20, lineHeight: 1.6 }}>
-            David Bach's bevisade metod: betala av den minsta skulden fullt ut, rulla sedan betalningen till nästa. Psykologiskt kraftfull och matematiskt optimal.
+            DOLP (Done On Last Payment): betala av den minsta skulden fullt ut, rulla sedan betalningen till nästa. Psykologiskt kraftfull och matematiskt optimal.
           </p>
           <SolutionPoint text="Exakt ordning på dina skulder — automatiskt beräknad" />
           <SolutionPoint text="Ser precis hur många månader varje skuld tar att lösa" />
@@ -319,7 +319,7 @@ export function LandingPage({ onStart }) {
           <FeatureCard
             emoji="🤖"
             title="Ekonomicoach"
-            desc="Ställ frågor om din skuldsituation och få personliga råd baserade på David Bachs principer — dygnet runt."
+            desc="Ställ frågor om din skuldsituation och få personliga råd baserade på DOLP-principerna — dygnet runt."
             accent="#4A9ECC"
           />
         </div>
@@ -369,10 +369,10 @@ export function LandingPage({ onStart }) {
             margin: '0 0 20px',
             fontStyle: 'italic',
           }}>
-            Det handlar inte om hur mycket du tjänar, det handlar om hur mycket du behåller — och i vilken ordning du betalar av dina skulder.
+            Skuldfrihet börjar inte med höjd inkomst — det börjar med rätt ordning på dina betalningar.
           </p>
-          <div style={{ fontSize: 13, color: '#F4A261', fontWeight: 600 }}>David Bach</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>Bestseller-författare · Finish Rich / Debt-Free For Life</div>
+          <div style={{ fontSize: 13, color: '#F4A261', fontWeight: 600 }}>DOLP-principen</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>Grunden för DebtHacker · Skuldsläckningsmetoden</div>
         </div>
       </section>
 
@@ -424,7 +424,7 @@ export function LandingPage({ onStart }) {
       {/* ── FOOTER ── */}
       <footer style={{ padding: '20px', textAlign: 'center', borderTop: `1px solid ${C.border}` }}>
         <div style={{ fontSize: 11, color: C.textDim, lineHeight: 2 }}>
-          DebtHacker.se · Baserad på David Bachs DOLP-metod<br />
+          DebtHacker.se · DOLP-skuldsläckningsmetoden<br />
           <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Powered by Conversify.io</a>
         </div>
       </footer>

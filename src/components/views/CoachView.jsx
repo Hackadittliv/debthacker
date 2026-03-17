@@ -9,7 +9,7 @@ export const CoachView = ({
     <div style={{ display: "flex", flexDirection: "column", height: `calc(100dvh - ${isDesktop ? 150 : 300}px)` }}>
       <div style={{ marginBottom: 14 }}>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: "#4A9ECC" }}>Ekonomicoach 🤖</div>
-        <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>Baserad på David Bachs principer</div>
+        <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>DOLP-skuldsläckningsmetoden</div>
       </div>
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 10, scrollbarWidth: "none" }}>
         {chatMessages.map((msg, i) => (

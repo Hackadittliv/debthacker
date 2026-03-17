@@ -76,9 +76,9 @@ const WELCOME_HTML = (email) => `<!DOCTYPE html>
                 <tr>
                   <td style="background:#161B22;border-radius:16px;padding:24px 24px;border:1px solid #21262D;border-left:3px solid #F4A261;">
                     <p style="margin:0 0 10px;font-size:15px;color:#C9D1D9;line-height:1.6;font-style:italic;">
-                      "Det handlar inte om hur mycket du tjänar — det handlar om hur mycket du behåller och i vilken ordning du betalar av dina skulder."
+                      "Skuldfrihet börjar inte med höjd inkomst — det börjar med rätt ordning på dina betalningar."
                     </p>
-                    <p style="margin:0;font-size:12px;color:#F4A261;font-weight:700;">David Bach · Finish Rich / Debt-Free For Life</p>
+                    <p style="margin:0;font-size:12px;color:#F4A261;font-weight:700;">DOLP-principen · Grunden för DebtHacker</p>
                   </td>
                 </tr>
               </table>

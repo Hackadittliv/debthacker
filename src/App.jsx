@@ -265,7 +265,7 @@ function AppShell() {
               </button>
             )}
             <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.6 }}>
-              Baserad på David Bachs DOLP-metod<br />
+              DOLP-skuldsläckningsmetoden<br />
               <span style={{ color: C.borderStrong }}>Powered by <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Conversify.io</a></span>
             </div>
           </div>

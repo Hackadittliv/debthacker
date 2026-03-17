@@ -23,7 +23,7 @@ export const ConsolidationView = ({
         <div style={{ ...S.card, background: C.gradLock, border: "1px solid #F4A26125" }}>
           <div style={{ ...S.row, marginBottom: 10 }}>
             <Icon name="brain" size={20} color="#F4A261" />
-            <div style={{ fontSize: 15, fontWeight: 600, color: "#F4A261" }}>Coach Bach säger:</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#F4A261" }}>Skuldhackaren säger:</div>
           </div>
           <div style={{ fontSize: 13, color: C.textNear, lineHeight: 1.5, marginBottom: 15 }}>
             "Ett samlingslån är livsfarligt om du inte först ändrat orsaken till lånen. Annars har du snart det stora samlånet PLUS nya småkrediter."

@@ -171,7 +171,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
 
   // Chat
   const [chatMessages, setChatMessages] = useState([
-    { role: 'assistant', text: 'Hej! Jag är din ekonomicoach baserad på David Bachs principer. Fråga mig om DOLP, sparande eller om samlån är rätt för dig.' }
+    { role: 'assistant', text: 'Hej! Jag är din ekonomicoach och använder DOLP-skuldsläckningsmetoden. Fråga mig om skulder, sparande eller om samlån är rätt för dig.' }
   ])
   const [chatInput, setChatInput] = useState('')
   const [isChatLoading, setIsChatLoading] = useState(false)
@@ -322,7 +322,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1000,
-          system: `Du är ekonomicoach på debthacker.se, baserad på David Bachs DOLP-metod. Svara på svenska, max 3 meningar, konkret och uppmuntrande. Inga listor. Kontext: ${ctx}`,
+          system: `Du är ekonomicoach på debthacker.se och använder DOLP-skuldsläckningsmetoden (minsta skuld först, snöbollseffekt). Svara på svenska, max 3 meningar, konkret och uppmuntrande. Inga listor. Kontext: ${ctx}`,
           messages: [...chatMessages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })), { role: 'user', content: userMsg }]
         })
       })
