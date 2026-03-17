@@ -1,0 +1,20 @@
+{
+  "name": "DebtHacker — Bli skuldfri",
+  "short_name": "DebtHacker",
+  "description": "Hacka dina skulder med DOLP-metoden av David Bach. Gratis skuldkalkylator och ekonomicoach.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#F4A261",
+  "lang": "sv-SE",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
