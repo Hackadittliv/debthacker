@@ -39,8 +39,10 @@ export const BucketsView = ({
               {editBucketType === b.type ? (
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{b.emoji} {b.label}</div>
-                  <input style={{ ...S.input, marginBottom: 7 }} type="number" placeholder="Nuvarande saldo (kr)" value={editBucket.current} onChange={e => setEditBucket(p => ({ ...p, current: e.target.value }))} />
-                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="Mål (kr)" value={editBucket.goal} onChange={e => setEditBucket(p => ({ ...p, goal: e.target.value }))} />
+                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Nuvarande saldo (kr)</div>
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editBucket.current} onChange={e => setEditBucket(p => ({ ...p, current: e.target.value }))} />
+                  <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Mål (kr)</div>
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editBucket.goal} onChange={e => setEditBucket(p => ({ ...p, goal: e.target.value }))} />
                   <div style={S.row}>
                     <button style={S.btn("primary")} onClick={saveBucket}><Icon name="check" size={13} color="#0D1117" />Spara</button>
                     <button style={S.btn("ghost")} onClick={() => setEditBucketType(null)}>Avbryt</button>

@@ -52,8 +52,10 @@ export const SubsView = ({
           <div key={sub.id} style={{ ...S.card, border: "1px solid #E6394620" }}>
             {editSubId === sub.id ? (
               <div>
-                <input style={{ ...S.input, marginBottom: 7 }} placeholder="Namn" value={editSub.name} onChange={e => setEditSub(p => ({ ...p, name: e.target.value }))} />
-                <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="Kostnad per månad (kr)" value={editSub.cost} onChange={e => setEditSub(p => ({ ...p, cost: e.target.value }))} />
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Namn</div>
+                <input style={{ ...S.input, marginBottom: 10 }} placeholder="t.ex. Netflix" value={editSub.name} onChange={e => setEditSub(p => ({ ...p, name: e.target.value }))} />
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Kostnad (kr/mån)</div>
+                <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editSub.cost} onChange={e => setEditSub(p => ({ ...p, cost: e.target.value }))} />
                 <div style={S.row}>
                   <button style={S.btn("primary")} onClick={saveSub}><Icon name="check" size={13} color="#0D1117" />Spara</button>
                   <button style={S.btn("ghost")} onClick={() => setEditSubId(null)}>Avbryt</button>
@@ -95,8 +97,10 @@ export const SubsView = ({
 
         {showSubForm ? (
           <div style={S.card}>
-            <input style={{ ...S.input, marginBottom: 10 }} placeholder="Namn (t.ex. Netflix)" value={newSub.name} onChange={e => setNewSub({ ...newSub, name: e.target.value })} />
-            <input style={{ ...S.input, marginBottom: 15 }} type="number" placeholder="Kostnad per månad (kr)" value={newSub.cost} onChange={e => setNewSub({ ...newSub, cost: e.target.value })} />
+            <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Namn</div>
+            <input style={{ ...S.input, marginBottom: 10 }} placeholder="t.ex. Netflix" value={newSub.name} onChange={e => setNewSub({ ...newSub, name: e.target.value })} />
+            <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Kostnad (kr/mån)</div>
+            <input style={{ ...S.input, marginBottom: 15 }} type="number" placeholder="0" value={newSub.cost} onChange={e => setNewSub({ ...newSub, cost: e.target.value })} />
             <div style={S.row}>
               <button style={S.btn("primary")} onClick={() => {
                 if (newSub.name && newSub.cost) {
