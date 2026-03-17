@@ -110,6 +110,12 @@ export function LandingPage({ onStart }) {
     });
     setEmailLoading(false);
     if (error) { setEmailError('Något gick fel. Försök igen.'); return; }
+    // Fire welcome email — non-blocking, failure is silent
+    fetch('/api/send-welcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: trimmed }),
+    }).catch(() => {});
     setEmailSent(true);
     setTimeout(() => onStart(), 1800);
   };
