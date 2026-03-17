@@ -4,7 +4,7 @@ import { formatSEK } from '../../utils/math';
 import { MiniCompoundChart } from '../ui/MiniCompoundChart';
 
 export const BucketsView = ({
-  buckets, setBuckets, monthlyIncome,
+  buckets, setBuckets, monthlyIncome, setMonthlyIncome,
   editBucketType, setEditBucketType, editBucket, setEditBucket, saveBucket
 }) => {
   const { S, C } = useTheme();
@@ -16,9 +16,14 @@ export const BucketsView = ({
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: "#40916C" }}>Tre Hinkar 🪣</div>
         <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>Automatisera din framtid</div>
       </div>
-      <div style={S.card}>
-        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Din månadsinkomst</div>
-        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, color: "#40916C" }}>{formatSEK(monthlyIncome)}</div>
+      <div style={{ ...S.card, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary }}>Din månadsinkomst (netto)</div>
+        <input
+          type="number"
+          value={monthlyIncome}
+          onChange={e => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
+          style={{ background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 8, padding: '5px 10px', fontSize: 15, fontWeight: 700, color: '#40916C', width: 120, textAlign: 'right', outline: 'none' }}
+        />
       </div>
 
       <div style={{ marginTop: 20 }}>

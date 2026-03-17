@@ -472,6 +472,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             buckets={buckets}
             setBuckets={setBuckets}
             monthlyIncome={monthlyIncome}
+            setMonthlyIncome={setMonthlyIncome}
             editBucketType={editBucketType}
             setEditBucketType={setEditBucketType}
             editBucket={editBucket}
