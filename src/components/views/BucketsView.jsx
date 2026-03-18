@@ -148,6 +148,46 @@ export const BucketsView = ({
                       </div>
                     </div>
                   </div>
+
+                  {/* Affiliate-kort för pensionshinken */}
+                  {b.type === 'pension' && (
+                    <div style={{ marginTop: 12 }}>
+                      <div style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 700, marginBottom: 8 }}>
+                        Öppna ett investeringskonto
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {[
+                          { name: "Avanza", desc: "Sveriges största nätmäklare · Gratis ISK", badge: "Populärast", color: "#40916C", url: "https://www.avanza.se/konton-lan-priser/konton/investeringssparkonto-isk.html?utm_source=debthacker&utm_medium=affiliate&utm_campaign=pension" },
+                          { name: "Nordnet", desc: "Indexfonder från 0 kr · Enkelt att börja", badge: "Enkelt", color: "#4A9ECC", url: "https://www.nordnet.se/se/tjanster/konton/investeringssparkonto?utm_source=debthacker&utm_medium=affiliate&utm_campaign=pension" },
+                        ].map(p => (
+                          <a
+                            key={p.name}
+                            href={p.url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            style={{
+                              display: "flex", alignItems: "center", gap: 12,
+                              background: C.bgSunken, border: `1px solid ${p.color}30`,
+                              borderRadius: 10, padding: "12px 14px", textDecoration: "none",
+                              borderLeft: `3px solid ${p.color}`,
+                            }}
+                          >
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                                <span style={{ fontSize: 13, fontWeight: 700, color: C.textPrimary }}>{p.name}</span>
+                                <span style={{ fontSize: 10, background: `${p.color}20`, color: p.color, borderRadius: 5, padding: "1px 6px", fontWeight: 700 }}>{p.badge}</span>
+                              </div>
+                              <div style={{ fontSize: 11, color: C.textSecondary }}>{p.desc}</div>
+                            </div>
+                            <div style={{ fontSize: 16, color: p.color }}>→</div>
+                          </a>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: 10, color: C.textDim, marginTop: 6, lineHeight: 1.5 }}>
+                        * Affiliatelänkar — DebtHacker kan få ersättning vid registrering. Kostar dig inget extra.
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </div>
