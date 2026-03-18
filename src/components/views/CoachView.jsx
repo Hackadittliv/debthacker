@@ -2,14 +2,19 @@ import { useTheme } from '../../context/ThemeContext';
 import { Icon } from '../ui/Icon';
 
 export const CoachView = ({
-  chatMessages, chatInput, setChatInput, sendMessage, chatEndRef, isChatLoading, isDesktop
+  chatMessages, chatInput, setChatInput, sendMessage, chatEndRef, isChatLoading, isDesktop, chatQuestionsLeft
 }) => {
   const { S, C } = useTheme();
   return (
     <div style={{ display: "flex", flexDirection: "column", height: `calc(100dvh - ${isDesktop ? 150 : 300}px)` }}>
-      <div style={{ marginBottom: 14 }}>
-        <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: "#4A9ECC" }}>Ekonomicoach 🤖</div>
-        <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>DOLP-skuldsläckningsmetoden</div>
+      <div style={{ marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: "#4A9ECC" }}>Ekonomicoach 🤖</div>
+          <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>DOLP-skuldsläckningsmetoden</div>
+        </div>
+        <div style={{ fontSize: 11, color: chatQuestionsLeft <= 2 ? '#E63946' : C.textMuted, background: C.bgSunken, borderRadius: 8, padding: "4px 10px", marginTop: 4, fontWeight: 600 }}>
+          {chatQuestionsLeft <= 0 ? 'Limit nådd idag' : `${chatQuestionsLeft} frågor kvar idag`}
+        </div>
       </div>
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 10, scrollbarWidth: "none" }}>
         {chatMessages.map((msg, i) => (

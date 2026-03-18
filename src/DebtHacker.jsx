@@ -178,6 +178,21 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   const [isChatLoading, setIsChatLoading] = useState(false)
   const chatEndRef = useRef(null)
 
+  const DAILY_CHAT_LIMIT = 10
+  const getChatUsage = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('dh_chat_usage') || '{}')
+      const today = new Date().toISOString().slice(0, 10)
+      if (stored.date !== today) return { date: today, count: 0 }
+      return stored
+    } catch { return { date: new Date().toISOString().slice(0, 10), count: 0 } }
+  }
+  const incrementChatUsage = () => {
+    const usage = getChatUsage()
+    localStorage.setItem('dh_chat_usage', JSON.stringify({ ...usage, count: usage.count + 1 }))
+  }
+  const chatQuestionsLeft = DAILY_CHAT_LIMIT - getChatUsage().count
+
   // ── Achievement check ────────────────────────────────────────────────────
   // Ref stays current every render — no stale closure when effect runs
   const achievementsRef = useRef(achievements)
@@ -330,25 +345,45 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   const sendMessage = async () => {
     if (!chatInput.trim()) return
     const userMsg = chatInput.trim()
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setChatMessages(p => [...p, { role: 'user', text: userMsg }, { role: 'assistant', text: 'Logga in för att chatta med AI-coachen.' }])
+      setChatInput('')
+      return
+    }
+
+    const usage = getChatUsage()
+    if (usage.count >= DAILY_CHAT_LIMIT) {
+      setChatMessages(p => [...p, { role: 'user', text: userMsg }, { role: 'assistant', text: `Du har använt dina ${DAILY_CHAT_LIMIT} frågor för idag. Kom tillbaka imorgon — håll kursen! 🔥` }])
+      setChatInput('')
+      return
+    }
+
     setChatInput('')
     setChatMessages(p => [...p, { role: 'user', text: userMsg }])
     setIsChatLoading(true)
+    incrementChatUsage()
+
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        setChatMessages(p => [...p, { role: 'assistant', text: 'Logga in för att chatta med AI-coachen.' }])
-        setIsChatLoading(false)
-        return
-      }
-      const ctx = `Inkomst: ${monthlyIncome} SEK. Skulder: ${debts.filter(d => !d.paid_off).map(d => `${d.name} ${d.balance}kr ${d.interest_rate}%`).join(', ')}. Skuldfri om: ${monthsToText(debtFreeMonths)}. Samlånslåset: ${consolidationUnlocked ? 'upplåst' : 'låst'}.`
+      const ctx = `Inkomst: ${monthlyIncome} SEK/mån. Skulder: ${debts.filter(d => !d.paid_off).map(d => `${d.name} ${d.balance}kr @ ${d.interest_rate}%`).join(', ') || 'inga inlagda'}. Skuldfri om: ${monthsToText(debtFreeMonths)}. Samlånslåset: ${consolidationUnlocked ? 'upplåst' : 'låst'}.`
       const res = await fetch('/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1000,
-          system: `Du är ekonomicoach på debthacker.se och använder DOLP-skuldsläckningsmetoden (minsta skuld först, snöbollseffekt). Svara på svenska, max 3 meningar, konkret och uppmuntrande. Inga listor. Kontext: ${ctx}`,
-          messages: [...chatMessages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })), { role: 'user', content: userMsg }]
+          max_tokens: 300,
+          system: `Du är en strikt ekonomicoach på debthacker.se och använder DOLP-skuldsläckningsmetoden (minsta skuld först, snöbollseffekt).
+
+REGLER:
+- Svara ALLTID på svenska
+- Max 3 meningar, konkret och uppmuntrande
+- Inga punktlistor
+- Om frågan INTE handlar om privatekonomi, skulder, sparande, ränta, budget eller DOLP-metoden — svara: "Jag är specialiserad på ekonomi och skuldfrihet. Fråga mig om dina skulder, sparande eller DOLP-planen!"
+- Referera alltid till användarens faktiska siffror när det är relevant
+
+Användarens kontext: ${ctx}`,
+          messages: [...chatMessages.slice(-6).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })), { role: 'user', content: userMsg }]
         })
       })
       if (res.status === 401) {
@@ -359,7 +394,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
       const data = await res.json()
       setChatMessages(p => [...p, { role: 'assistant', text: data.content?.[0]?.text || 'Håll kursen! Minsta skuld alltid först.' }])
     } catch {
-      setChatMessages(p => [...p, { role: 'assistant', text: 'Håll kursen! Minsta skuld alltid först.' }])
+      setChatMessages(p => [...p, { role: 'assistant', text: 'Något gick fel. Försök igen!' }])
     }
     setIsChatLoading(false)
   }
@@ -557,6 +592,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             chatEndRef={chatEndRef}
             isChatLoading={isChatLoading}
             isDesktop={isDesktop}
+            chatQuestionsLeft={chatQuestionsLeft}
           />
         )}
         {activeTab === 'progress' && (
