@@ -136,11 +136,11 @@ export function exportDOLPCSV(debts, dolpPlan, extraPayment, debtFreeMonths) {
   URL.revokeObjectURL(url);
 }
 
-export function calculateCompoundGrowth(monthlyContribution, years, annualRate = 0.08) {
-  let balance = 0;
+export function calculateCompoundGrowth(monthlyContribution, years, annualRate = 0.08, initialBalance = 0) {
+  let balance = initialBalance;
   let history = [];
   const monthlyRate = annualRate / 12;
-  
+
   for (let i = 1; i <= years; i++) {
     for (let m = 0; m < 12; m++) {
       balance = balance * (1 + monthlyRate) + monthlyContribution;

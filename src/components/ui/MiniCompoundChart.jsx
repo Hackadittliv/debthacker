@@ -1,19 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { calculateCompoundGrowth } from '../../utils/math';
 
-export const MiniCompoundChart = ({ monthly, years, color }) => {
+export const MiniCompoundChart = ({ monthly, years, color, rate = 0.08, initialBalance = 0 }) => {
   const canvasRef = useRef(null);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
-    
+
     // Clear
     ctx.clearRect(0, 0, width, height);
-    
-    const data = calculateCompoundGrowth(monthly, years);
+
+    const data = calculateCompoundGrowth(monthly, years, rate, initialBalance);
     const max = data[data.length - 1]?.amount || 1;
     
     ctx.beginPath();
@@ -41,7 +41,7 @@ export const MiniCompoundChart = ({ monthly, years, color }) => {
     ctx.fillStyle = color;
     ctx.fill();
     
-  }, [monthly, years, color]);
+  }, [monthly, years, color, rate, initialBalance]);
   
   return (
     <div style={{ height: 60, width: "100%", position: "relative" }}>
