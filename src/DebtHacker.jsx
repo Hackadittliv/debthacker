@@ -392,9 +392,13 @@ Användarens kontext: ${ctx}`,
         return
       }
       const data = await res.json()
-      setChatMessages(p => [...p, { role: 'assistant', text: data.content?.[0]?.text || 'Håll kursen! Minsta skuld alltid först.' }])
-    } catch {
-      setChatMessages(p => [...p, { role: 'assistant', text: 'Något gick fel. Försök igen!' }])
+      if (!res.ok) {
+        setChatMessages(p => [...p, { role: 'assistant', text: `Fel ${res.status}: ${data.error?.message || data.message || 'Okänt fel från AI-tjänsten.'}` }])
+      } else {
+        setChatMessages(p => [...p, { role: 'assistant', text: data.content?.[0]?.text || 'Håll kursen! Minsta skuld alltid först.' }])
+      }
+    } catch (err) {
+      setChatMessages(p => [...p, { role: 'assistant', text: `Tekniskt fel: ${err.message}` }])
     }
     setIsChatLoading(false)
   }
