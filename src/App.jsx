@@ -139,7 +139,8 @@ function LoginModal({ onClose, onShowPrivacy }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: C.overlayBg, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 28, maxWidth: 360, width: '100%' }}>
+      <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 28, maxWidth: 360, width: '100%', position: 'relative' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: C.textMuted, lineHeight: 1, padding: 4 }}>✕</button>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#F4A261', marginBottom: 6 }}>
           🔥 {mode === 'login' ? 'Logga in' : 'Skapa konto'}
         </div>
