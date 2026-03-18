@@ -493,6 +493,7 @@ function AppRoot() {
   const [authLoading, setAuthLoading] = useState(true)
   const [showApp, setShowApp] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(() => window.location.pathname === '/integritet')
+  const [showLandingLogin, setShowLandingLogin] = useState(false)
 
   // Check active session on startup — logged-in users go straight to app
   useEffect(() => {
@@ -500,6 +501,10 @@ function AppRoot() {
       if (session?.user) setShowApp(true)
       setAuthLoading(false)
     })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) { setShowLandingLogin(false); setShowApp(true) }
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
   const handleStart = () => setShowApp(true)
@@ -516,7 +521,12 @@ function AppRoot() {
 
   if (authLoading) return <div style={{ background: '#0D1117', minHeight: '100vh' }} />
   if (showPrivacy) return <PrivacyPage onBack={handleBackFromPrivacy} />
-  if (!showApp) return <LandingPage onStart={handleStart} onShowPrivacy={handleShowPrivacy} />
+  if (!showApp) return (
+    <>
+      {showLandingLogin && <LoginModal onClose={() => setShowLandingLogin(false)} onShowPrivacy={handleShowPrivacy} />}
+      <LandingPage onStart={handleStart} onShowPrivacy={handleShowPrivacy} onLogin={() => setShowLandingLogin(true)} />
+    </>
+  )
   return <AppShell onShowPrivacy={handleShowPrivacy} onLogout={handleLogout} />
 }
 

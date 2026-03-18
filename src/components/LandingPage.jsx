@@ -85,7 +85,7 @@ function Step({ num, title, desc, accent }) {
   );
 }
 
-export function LandingPage({ onStart, onShowPrivacy }) {
+export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
   const { C, isDark } = useTheme();
   const [showFomo, setShowFomo] = useState(false);
   const [email, setEmail] = useState('');
@@ -139,15 +139,26 @@ export function LandingPage({ onStart, onShowPrivacy }) {
           <span>DebtHacker</span>
           <span style={{ fontSize: 10, color: C.textMuted, fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}>.se</span>
         </div>
-        <button
-          onClick={onStart}
-          style={{
-            background: '#F4A261', color: '#0D1117', border: 'none', borderRadius: 20,
-            padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-          }}
-        >
-          Starta gratis →
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={onLogin}
+            style={{
+              background: 'none', color: C.textSecondary, border: `1px solid ${C.borderStrong}`,
+              borderRadius: 20, padding: '7px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            }}
+          >
+            Logga in
+          </button>
+          <button
+            onClick={onStart}
+            style={{
+              background: '#F4A261', color: '#0D1117', border: 'none', borderRadius: 20,
+              padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Starta gratis →
+          </button>
+        </div>
       </nav>
 
       {/* ── HERO ── */}
