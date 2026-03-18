@@ -13,7 +13,7 @@ export const ConsolidationView = ({
       label: "Kreditkort uppsagt/klippt",
       progress: behaviorProof.cardClosed ? "Klar ✓" : "Väntar",
       done: behaviorProof.cardClosed,
-      btnLabel: "Bekräfta — jag har klippt kortet",
+      btnLabel: "Bekräfta - jag har klippt kortet",
       onAction: () => setBehaviorProof(p => ({ ...p, cardClosed: true })),
     },
     {
@@ -138,7 +138,7 @@ export const ConsolidationView = ({
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
-            { name: "Zmarta", desc: "Jämför upp till 40 banker — en ansökan", badge: "Populärast", color: "#40916C", url: "https://www.zmarta.se/lan/samlingslaan?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
+            { name: "Zmarta", desc: "Jämför upp till 40 banker - en ansökan", badge: "Populärast", color: "#40916C", url: "https://www.zmarta.se/lan/samlingslaan?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
             { name: "Lendo", desc: "Utan UC-förfrågan · Svar på 1 minut", badge: "Snabbast", color: "#4A9ECC", url: "https://www.lendo.se/samla-lan?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
             { name: "Brocc", desc: "P2P-lån med låg ränta · Etisk bank", badge: "Lägst ränta", color: "#C77B2A", url: "https://www.brocc.se?utm_source=debthacker&utm_medium=affiliate&utm_campaign=consolidation" },
           ].map(p => (
@@ -166,7 +166,7 @@ export const ConsolidationView = ({
           ))}
         </div>
         <div style={{ fontSize: 11, color: C.textDim, marginTop: 8, lineHeight: 1.6 }}>
-          * Dessa är affiliatelänkar — DebtHacker kan få ersättning om du ansöker. Det kostar dig inget extra och påverkar inte vår rekommendation.
+          * Dessa är affiliatelänkar - DebtHacker kan få ersättning om du ansöker. Det kostar dig inget extra och påverkar inte vår rekommendation.
         </div>
       </div>
 

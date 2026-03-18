@@ -1,6 +1,6 @@
 import { useTheme } from '../../context/ThemeContext';
 import { Icon } from '../ui/Icon';
-import { formatSEK, calculateDOLPOrder, monthsToText } from '../../utils/math';
+import { formatSEK, calculateDOLPOrder, monthsToText, exportDOLPCSV } from '../../utils/math';
 
 const DEBT_TYPES = [
   { value: '', label: 'Välj typ (valfritt)', emoji: '' },
@@ -18,6 +18,7 @@ export const DOLPView = ({
   monthlyIncome, dolpPlan, editDebtId, setEditDebtId, editDebt, setEditDebt,
   saveDebt, setDeleteDebtId, setShowAddForm
 }) => {
+  const handleExport = () => exportDOLPCSV(debts, dolpPlan, extraPayment, debtFreeMonths);
   const { S, C } = useTheme();
   const sorted = calculateDOLPOrder(debts);
   const paidDebts = debts.filter(d => d.paid_off);
@@ -134,6 +135,15 @@ export const DOLPView = ({
         <button onClick={() => setShowAddForm(true)} style={{ ...S.btn("primary"), width: "100%", justifyContent: "center", padding: 14, fontSize: 15 }}>
           + Lägg till skuld
         </button>
+
+        {sorted.length > 0 && (
+          <button
+            onClick={handleExport}
+            style={{ ...S.btn("ghost"), width: "100%", justifyContent: "center", padding: 12, fontSize: 13, marginTop: 8, gap: 6 }}
+          >
+            <Icon name="download" size={13} color={C.textSecondary} /> Exportera plan som CSV
+          </button>
+        )}
 
         {paidDebts.length > 0 && (
           <div style={{ marginTop: 28 }}>

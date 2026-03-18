@@ -104,7 +104,7 @@ export const SubsView = ({
             <div style={S.row}>
               <button style={S.btn("primary")} onClick={() => {
                 if (newSub.name && newSub.cost) {
-                  setSubscriptions(p => [...p, { id: Date.now().toString(), name: newSub.name, cost: parseFloat(newSub.cost), active: true }]);
+                  setSubscriptions(p => [...p, { id: crypto.randomUUID(), name: newSub.name, cost: parseFloat(newSub.cost), active: true }]);
                   setNewSub({ name: "", cost: "" });
                   setShowSubForm(false);
                 }

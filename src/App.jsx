@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Component } from 'react'
 import DebtHacker from './DebtHacker.jsx'
 import { supabase } from './supabase.js'
 import { ThemeProvider, useTheme } from './context/ThemeContext.jsx'
 import { LandingPage } from './components/LandingPage.jsx'
+import { PrivacyPage } from './components/PrivacyPage.jsx'
 
 const TABS = [
   { id: 'dashboard',    label: 'Översikt', emoji: '🏠' },
@@ -50,9 +51,9 @@ function ThemeToggle() {
   )
 }
 
-function LoginModal({ onClose }) {
+function LoginModal({ onClose, onShowPrivacy }) {
   const { C } = useTheme()
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const [mode, setMode] = useState('login') // 'login' | 'signup' | 'forgot'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -63,6 +64,10 @@ function LoginModal({ onClose }) {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password) return
+    if (mode === 'signup' && password.length < 8) {
+      setError('Lösenordet måste vara minst 8 tecken.')
+      return
+    }
     setLoading(true)
     setError('')
     setSuccess('')
@@ -79,6 +84,18 @@ function LoginModal({ onClose }) {
     }
   }
 
+  const handleForgot = async () => {
+    if (!email.trim()) { setError('Ange din e-postadress.'); return }
+    setLoading(true)
+    setError('')
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    })
+    setLoading(false)
+    if (err) { setError(err.message); return }
+    setSuccess('Kolla din mejl! Vi har skickat en länk för att återställa lösenordet.')
+  }
+
   const handleGoogle = async () => {
     setLoading(true)
     setError('')
@@ -87,6 +104,37 @@ function LoginModal({ onClose }) {
       options: { redirectTo: window.location.origin },
     })
     if (err) { setError(err.message); setLoading(false) }
+  }
+
+  if (mode === 'forgot') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: C.overlayBg, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 28, maxWidth: 360, width: '100%' }}>
+          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#F4A261', marginBottom: 6 }}>🔑 Glömt lösenord</div>
+          <div style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, lineHeight: 1.6 }}>
+            Ange din e-postadress så skickar vi en länk för att sätta ett nytt lösenord.
+          </div>
+          {success ? (
+            <div>
+              <div style={{ fontSize: 36, textAlign: 'center', marginBottom: 12 }}>📬</div>
+              <div style={{ fontSize: 14, color: C.textPrimary, textAlign: 'center', marginBottom: 16 }}>{success}</div>
+              <button onClick={() => { setSuccess(''); setMode('login') }} style={{ width: '100%', padding: 12, background: '#F4A261', border: 'none', borderRadius: 10, color: '#0D1117', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Tillbaka till inloggning</button>
+            </div>
+          ) : (
+            <>
+              <input style={inputStyle} type="email" placeholder="din@mejl.se" value={email} onChange={e => setEmail(e.target.value)} autoFocus onKeyDown={e => e.key === 'Enter' && handleForgot()} />
+              {error && <div style={{ fontSize: 12, color: '#E63946', marginBottom: 8 }}>{error}</div>}
+              <button onClick={handleForgot} disabled={loading} style={{ width: '100%', padding: 12, background: '#F4A261', border: 'none', borderRadius: 10, color: '#0D1117', fontSize: 14, fontWeight: 700, cursor: loading ? 'wait' : 'pointer', marginBottom: 8 }}>
+                {loading ? '...' : 'Skicka återställningslänk'}
+              </button>
+              <button onClick={() => { setMode('login'); setError('') }} style={{ width: '100%', padding: 10, background: 'none', border: 'none', color: C.textSecondary, cursor: 'pointer', fontSize: 13 }}>
+                ← Tillbaka
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -136,8 +184,69 @@ function LoginModal({ onClose }) {
             <button onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: 12, background: '#F4A261', border: 'none', borderRadius: 10, color: '#0D1117', fontSize: 14, fontWeight: 700, cursor: loading ? 'wait' : 'pointer', marginBottom: 8 }}>
               {loading ? '...' : mode === 'login' ? 'Logga in' : 'Skapa konto'}
             </button>
+
+            {mode === 'login' && (
+              <button onClick={() => { setMode('forgot'); setError('') }} style={{ width: '100%', padding: '6px 0', background: 'none', border: 'none', color: C.textSecondary, cursor: 'pointer', fontSize: 12 }}>
+                Glömt lösenord?
+              </button>
+            )}
+
             <button onClick={onClose} style={{ width: '100%', padding: 10, background: 'none', border: 'none', color: C.textSecondary, cursor: 'pointer', fontSize: 13 }}>
               Fortsätt utan konto
+            </button>
+            {mode === 'signup' && (
+              <div style={{ fontSize: 11, color: C.textMuted, textAlign: 'center', lineHeight: 1.6, marginTop: 4 }}>
+                Genom att skapa konto godkänner du vår{' '}
+                <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: '#4A9ECC', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+                  integritetspolicy
+                </button>.
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function NewPasswordModal({ onDone }) {
+  const { C } = useTheme()
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [done, setDone] = useState(false)
+  const inputStyle = { width: '100%', padding: '10px 13px', background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 10, color: C.textPrimary, fontSize: 14, marginBottom: 10, boxSizing: 'border-box', outline: 'none' }
+
+  const handleSave = async () => {
+    if (password.length < 8) { setError('Lösenordet måste vara minst 8 tecken.'); return }
+    if (password !== confirm) { setError('Lösenorden matchar inte.'); return }
+    setLoading(true)
+    setError('')
+    const { error: err } = await supabase.auth.updateUser({ password })
+    setLoading(false)
+    if (err) { setError(err.message); return }
+    setDone(true)
+    setTimeout(onDone, 2000)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 28, maxWidth: 360, width: '100%' }}>
+        {done ? (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#40916C' }}>Lösenord uppdaterat!</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#F4A261', marginBottom: 6 }}>🔑 Nytt lösenord</div>
+            <div style={{ fontSize: 13, color: C.textSecondary, marginBottom: 20, lineHeight: 1.6 }}>Välj ett nytt lösenord för ditt konto.</div>
+            <input style={inputStyle} type="password" placeholder="Nytt lösenord (min. 8 tecken)" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
+            <input style={inputStyle} type="password" placeholder="Upprepa lösenord" value={confirm} onChange={e => setConfirm(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSave()} />
+            {error && <div style={{ fontSize: 12, color: '#E63946', marginBottom: 8 }}>{error}</div>}
+            <button onClick={handleSave} disabled={loading} style={{ width: '100%', padding: 12, background: '#F4A261', border: 'none', borderRadius: 10, color: '#0D1117', fontSize: 14, fontWeight: 700, cursor: loading ? 'wait' : 'pointer' }}>
+              {loading ? '...' : 'Spara nytt lösenord'}
             </button>
           </>
         )}
@@ -146,7 +255,7 @@ function LoginModal({ onClose }) {
   )
 }
 
-function AppShell() {
+function AppShell({ onShowPrivacy, onLogout }) {
   const { C, isDark } = useTheme()
   const isDesktop = useIsDesktop()
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -155,6 +264,7 @@ function AppShell() {
   })
   const [user, setUser] = useState(null)
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('dh_cons_unlocked', JSON.stringify(consolidationUnlocked))
@@ -164,8 +274,10 @@ function AppShell() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
+      if (event === 'PASSWORD_RECOVERY') setShowNewPassword(true)
+      if (event === 'SIGNED_OUT') onLogout()
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -173,6 +285,7 @@ function AppShell() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    onLogout()
   }
 
   const tabsWithDynamic = TABS.map(t =>
@@ -183,7 +296,8 @@ function AppShell() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: C.bgApp }}>
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} onShowPrivacy={onShowPrivacy} />}
+      {showNewPassword && <NewPasswordModal onDone={() => setShowNewPassword(false)} />}
 
       {/* ── DESKTOP SIDEBAR ── */}
       {isDesktop && (
@@ -376,24 +490,67 @@ function AppShell() {
 }
 
 function AppRoot() {
-  const [showApp, setShowApp] = useState(() => {
-    // If user previously clicked "start", skip landing page
-    try { return localStorage.getItem('dh_skipped_landing') === '1' } catch { return false }
-  })
+  const [authLoading, setAuthLoading] = useState(true)
+  const [showApp, setShowApp] = useState(false)
+  const [showPrivacy, setShowPrivacy] = useState(() => window.location.pathname === '/integritet')
 
-  const handleStart = () => {
-    try { localStorage.setItem('dh_skipped_landing', '1') } catch {}
-    setShowApp(true)
+  // Check active session on startup — logged-in users go straight to app
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) setShowApp(true)
+      setAuthLoading(false)
+    })
+  }, [])
+
+  const handleStart = () => setShowApp(true)
+  const handleLogout = () => setShowApp(false)
+
+  const handleShowPrivacy = () => {
+    window.history.pushState({}, '', '/integritet')
+    setShowPrivacy(true)
+  }
+  const handleBackFromPrivacy = () => {
+    window.history.pushState({}, '', '/')
+    setShowPrivacy(false)
   }
 
-  if (!showApp) return <LandingPage onStart={handleStart} />
-  return <AppShell />
+  if (authLoading) return <div style={{ background: '#0D1117', minHeight: '100vh' }} />
+  if (showPrivacy) return <PrivacyPage onBack={handleBackFromPrivacy} />
+  if (!showApp) return <LandingPage onStart={handleStart} onShowPrivacy={handleShowPrivacy} />
+  return <AppShell onShowPrivacy={handleShowPrivacy} onLogout={handleLogout} />
+}
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0D1117', color: '#E6EDF3', fontFamily: 'sans-serif', gap: 16, padding: 24 }}>
+          <div style={{ fontSize: 36 }}>🔥</div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>Något gick fel</div>
+          <div style={{ fontSize: 14, color: '#8B949E', textAlign: 'center' }}>Ladda om sidan för att försöka igen. Din data är sparad.</div>
+          <button onClick={() => window.location.reload()} style={{ marginTop: 8, padding: '10px 24px', background: '#F4A261', border: 'none', borderRadius: 10, color: '#0D1117', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
+            Ladda om
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
 }
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppRoot />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AppRoot />
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }

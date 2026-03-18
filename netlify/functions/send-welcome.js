@@ -128,7 +128,7 @@ export default async function handler(req) {
   }
 
   const { email } = body
-  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) {
     return new Response(JSON.stringify({ error: 'Invalid email' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },

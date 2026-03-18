@@ -1,16 +1,37 @@
+import { useState } from 'react'
 import { useTheme } from '../../context/ThemeContext'
 import { ACHIEVEMENTS, LEVELS, getLevel } from '../../utils/achievements'
+import { formatSEK } from '../../utils/math'
 
 const MILESTONE_DAYS = { 7: '#F4A261', 30: '#4A9ECC', 50: '#C77B2A', 100: '#8B5CF6' }
 
+const todayKey = () => new Date().toISOString().slice(0, 10) // 'YYYY-MM-DD'
+
 export const ProgressView = ({
-  achievements, behaviorProof, debts, subscriptions, consolidationUnlocked, buckets
+  achievements, behaviorProof, setBehaviorProof, debts, subscriptions, consolidationUnlocked, buckets
 }) => {
   const { S, C } = useTheme()
   const unlockedIds = achievements.map(a => a.id)
   const level = getLevel(unlockedIds.length)
   const nextLevel = LEVELS.find(l => l.min > unlockedIds.length)
   const days = Math.min(behaviorProof.noCreditDays, 100)
+
+  const lastLoggedDay = (() => { try { return localStorage.getItem('dh_last_day_log') } catch { return null } })()
+  const alreadyLoggedToday = lastLoggedDay === todayKey()
+
+  const logDay = () => {
+    if (alreadyLoggedToday) return
+    setBehaviorProof(p => ({ ...p, noCreditDays: (p.noCreditDays || 0) + 1 }))
+    try { localStorage.setItem('dh_last_day_log', todayKey()) } catch {}
+  }
+
+  // Debt progress
+  const totalDebts = debts.length
+  const paidDebts = debts.filter(d => d.paid_off).length
+  const totalOriginalDebt = debts.reduce((s, d) => s + d.balance, 0)
+  const totalRemaining = debts.filter(d => !d.paid_off).reduce((s, d) => s + d.balance, 0)
+  const totalPaidOff = totalOriginalDebt - totalRemaining
+  const paidOffPct = totalOriginalDebt > 0 ? Math.round((totalPaidOff / totalOriginalDebt) * 100) : 0
 
   return (
     <div>
@@ -44,6 +65,30 @@ export const ProgressView = ({
           <div style={S.progFill(Math.round((unlockedIds.length / ACHIEVEMENTS.length) * 100), level.color)} />
         </div>
       </div>
+
+      {/* Debt progress */}
+      {totalDebts > 0 && (
+        <div style={{ ...S.card, marginBottom: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>Skuldfrihetsmätaren</div>
+              <div style={{ fontSize: 12, color: C.textSecondary }}>{paidDebts} av {totalDebts} skulder avbetalade</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#40916C' }}>{paidOffPct}%</div>
+              <div style={{ fontSize: 11, color: C.textMuted }}>{formatSEK(totalPaidOff)} borta</div>
+            </div>
+          </div>
+          <div style={{ ...S.progBar }}>
+            <div style={S.progFill(paidOffPct, '#40916C')} />
+          </div>
+          {totalRemaining > 0 && (
+            <div style={{ fontSize: 12, color: C.textMuted, marginTop: 8 }}>
+              {formatSEK(totalRemaining)} återstår
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 100-day challenge */}
       <div style={{ ...S.card, marginBottom: 16 }}>
@@ -80,7 +125,7 @@ export const ProgressView = ({
           })}
         </div>
 
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 14 }}>
           {Object.entries(MILESTONE_DAYS).map(([d, color]) => (
             <div key={d} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 10, height: 10, borderRadius: 2, background: days >= Number(d) ? color : `${color}30`, border: `1px solid ${color}` }} />
@@ -90,6 +135,26 @@ export const ProgressView = ({
             </div>
           ))}
         </div>
+
+        {days < 100 && (
+          <button
+            onClick={logDay}
+            disabled={alreadyLoggedToday}
+            style={{
+              width: '100%', padding: '11px 0', borderRadius: 10, border: 'none',
+              background: alreadyLoggedToday ? C.bgSunken : 'linear-gradient(135deg, #40916C, #2D6A4F)',
+              color: alreadyLoggedToday ? C.textMuted : '#fff',
+              fontSize: 14, fontWeight: 700, cursor: alreadyLoggedToday ? 'default' : 'pointer',
+            }}
+          >
+            {alreadyLoggedToday ? `✅ Dag ${behaviorProof.noCreditDays} loggad idag` : `✊ Logga dag ${(behaviorProof.noCreditDays || 0) + 1} - ingen ny kredit idag`}
+          </button>
+        )}
+        {days >= 100 && (
+          <div style={{ textAlign: 'center', padding: '10px 0', fontSize: 14, color: '#8B5CF6', fontWeight: 700 }}>
+            🎉 100-dagarschallengen klarad!
+          </div>
+        )}
       </div>
 
       {/* Achievement badges */}

@@ -85,7 +85,7 @@ function Step({ num, title, desc, accent }) {
   );
 }
 
-export function LandingPage({ onStart }) {
+export function LandingPage({ onStart, onShowPrivacy }) {
   const { C, isDark } = useTheme();
   const [showFomo, setShowFomo] = useState(false);
   const [email, setEmail] = useState('');
@@ -101,7 +101,7 @@ export function LandingPage({ onStart }) {
   const handleEmailStart = async () => {
     const trimmed = email.trim();
     if (!trimmed) { onStart(); return; }
-    if (!/\S+@\S+\.\S+/.test(trimmed)) { setEmailError('Ange en giltig e-postadress'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(trimmed)) { setEmailError('Ange en giltig e-postadress'); return; }
     setEmailLoading(true);
     setEmailError('');
     const { error } = await supabase.auth.signInWithOtp({
@@ -181,7 +181,7 @@ export function LandingPage({ onStart }) {
 
           <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
             De flesta betalar skulder i fel ordning och slösar tusentals kronor på onödig ränta.
-            DebtHacker visar dig den exakta vägen ut — med den beprövade DOLP-skuldsläckningsmetoden.
+            DebtHacker visar dig den exakta vägen ut - med den beprövade DOLP-skuldsläckningsmetoden.
           </p>
 
           {emailSent ? (
@@ -221,8 +221,14 @@ export function LandingPage({ onStart }) {
                 </button>
               </div>
               {emailError && <div style={{ fontSize: 12, color: '#F4A261' }}>{emailError}</div>}
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', textAlign: 'center' }}>
                 100% gratis · Ingen spam · <span style={{ cursor: 'pointer', textDecoration: 'underline', color: 'rgba(255,255,255,0.4)' }} onClick={onStart}>Hoppa över, starta utan konto</span>
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
+                Genom att ange din e-post godkänner du vår{' '}
+                <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+                  integritetspolicy
+                </button>.
               </div>
             </div>
           )}
@@ -246,7 +252,7 @@ export function LandingPage({ onStart }) {
       <section style={{ padding: '56px 20px', maxWidth: maxW, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{ fontSize: 12, color: '#E63946', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>Känner du igen dig?</div>
-          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: C.textPrimary, margin: '0 0 16px' }}>Så betalar de flesta skulder — <span style={{ color: '#E63946' }}>fel</span></h2>
+          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: C.textPrimary, margin: '0 0 16px' }}>Så betalar de flesta skulder - <span style={{ color: '#E63946' }}>fel</span></h2>
           <p style={{ fontSize: 14, color: C.textSecondary, lineHeight: 1.7, maxWidth: 460, margin: '0 auto' }}>
             Banker tjänar pengar på att du inte förstår ordningen. DOLP-metoden kostar dem miljarder.
           </p>
@@ -271,7 +277,7 @@ export function LandingPage({ onStart }) {
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 20, lineHeight: 1.6 }}>
             DOLP (Done On Last Payment): betala av den minsta skulden fullt ut, rulla sedan betalningen till nästa. Psykologiskt kraftfull och matematiskt optimal.
           </p>
-          <SolutionPoint text="Exakt ordning på dina skulder — automatiskt beräknad" />
+          <SolutionPoint text="Exakt ordning på dina skulder - automatiskt beräknad" />
           <SolutionPoint text="Ser precis hur många månader varje skuld tar att lösa" />
           <SolutionPoint text="Snöbollseffekten: varje betald skuld frigör mer till nästa" />
           <SolutionPoint text="Betalar av skulder upp till 40% snabbare" />
@@ -301,7 +307,7 @@ export function LandingPage({ onStart }) {
           <FeatureCard
             emoji="🔒"
             title="Samlånslåset"
-            desc="Lås upp möjligheten att slå ihop skulder. Kräver att du betalar av minst en skuld — ger incitament att komma igång."
+            desc="Lås upp möjligheten att slå ihop skulder. Kräver att du betalar av minst en skuld - ger incitament att komma igång."
             accent="#4A9ECC"
           />
           <FeatureCard
@@ -319,7 +325,7 @@ export function LandingPage({ onStart }) {
           <FeatureCard
             emoji="🤖"
             title="Ekonomicoach"
-            desc="Ställ frågor om din skuldsituation och få personliga råd baserade på DOLP-principerna — dygnet runt."
+            desc="Ställ frågor om din skuldsituation och få personliga råd baserade på DOLP-principerna - dygnet runt."
             accent="#4A9ECC"
           />
         </div>
@@ -347,7 +353,7 @@ export function LandingPage({ onStart }) {
           />
           <Step
             num="3"
-            title="Följ planen — dag för dag"
+            title="Följ planen - dag för dag"
             desc="Sätt en extra betalning per månad. Kryssa av skulder när de är klara. Bygg momentum med 100-dagarsutmaningen."
             accent="#4A9ECC"
           />
@@ -369,7 +375,7 @@ export function LandingPage({ onStart }) {
             margin: '0 0 20px',
             fontStyle: 'italic',
           }}>
-            Skuldfrihet börjar inte med höjd inkomst — det börjar med rätt ordning på dina betalningar.
+            Skuldfrihet börjar inte med höjd inkomst - det börjar med rätt ordning på dina betalningar.
           </p>
           <div style={{ fontSize: 13, color: '#F4A261', fontWeight: 600 }}>DOLP-principen</div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>Grunden för DebtHacker · Skuldsläckningsmetoden</div>
@@ -383,7 +389,7 @@ export function LandingPage({ onStart }) {
           position: 'sticky', bottom: 60, zIndex: 50,
         }}>
           <div style={{ fontSize: 13, color: '#fff', fontWeight: 600, lineHeight: 1.5 }}>
-            ⚡ Varje månad du väntar betalar du onödig ränta. Starta nu — tar 5 minuter.
+            ⚡ Varje månad du väntar betalar du onödig ränta. Starta nu - tar 5 minuter.
           </div>
         </section>
       )}
@@ -422,10 +428,18 @@ export function LandingPage({ onStart }) {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ padding: '20px', textAlign: 'center', borderTop: `1px solid ${C.border}` }}>
-        <div style={{ fontSize: 11, color: C.textDim, lineHeight: 2 }}>
+      <footer style={{ padding: '24px 20px', textAlign: 'center', borderTop: `1px solid ${C.border}` }}>
+        <div style={{ fontSize: 11, color: C.textDim, lineHeight: 2.2 }}>
           DebtHacker.se · DOLP-skuldsläckningsmetoden<br />
           <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Powered by Conversify.io</a>
+          <span style={{ margin: '0 8px', color: C.border }}>·</span>
+          <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: '#4A9ECC', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+            Integritetspolicy
+          </button>
+          <br />
+          <span style={{ fontSize: 10, color: C.textDim }}>
+            Vi använder enbart nödvändiga session-cookies. Ingen spårning.
+          </span>
         </div>
       </footer>
     </div>

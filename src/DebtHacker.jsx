@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabase.js'
-import { calculatePayoffPlan, monthsToText } from './utils/math.js'
+import { calculatePayoffPlan, monthsToText, calculateInterestComparison } from './utils/math.js'
 import { checkAchievements } from './utils/achievements.js'
 import { useTheme } from './context/ThemeContext.jsx'
 import { DashboardView } from './components/views/DashboardView.jsx'
@@ -213,17 +213,23 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   // ── Supabase sync ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!user) return
-    supabase.from('dh_user_data').select('data').eq('user_id', user.id).single().then(({ data, error }) => {
+    supabase.from('dh_user_data').select('data, updated_at').eq('user_id', user.id).single().then(({ data, error }) => {
       if (error && error.code !== 'PGRST116') return // PGRST116 = no rows, expected for new users
       if (!data?.data) {
         // Första inloggning — spara lokal data direkt till molnet
+        const now = new Date().toISOString()
+        localStorage.setItem('dh_sync_at', now)
         supabase.from('dh_user_data').upsert({
           user_id: user.id,
           data: { debts, subscriptions, extraPayment, monthlyIncome, behaviorProof, consolidationRate, consolidationUnlocked, buckets, achievements },
-          updated_at: new Date().toISOString(),
+          updated_at: now,
         })
         return
       }
+      // Använd molndata bara om den är nyare än senaste lokala sparning
+      const cloudUpdatedAt = data.updated_at
+      const localSyncAt = localStorage.getItem('dh_sync_at')
+      if (localSyncAt && cloudUpdatedAt && new Date(cloudUpdatedAt) <= new Date(localSyncAt)) return
       const d = data.data
       if (d.debts) setDebts(d.debts)
       if (d.subscriptions) setSubscriptions(d.subscriptions)
@@ -234,16 +240,19 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
       if (d.consolidationUnlocked !== undefined) setConsolidationUnlocked(d.consolidationUnlocked)
       if (d.buckets) setBuckets(d.buckets)
       if (d.achievements) setAchievements(d.achievements)
+      if (cloudUpdatedAt) localStorage.setItem('dh_sync_at', cloudUpdatedAt)
     })
   }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!user) return
     const timer = setTimeout(() => {
+      const now = new Date().toISOString()
+      localStorage.setItem('dh_sync_at', now)
       supabase.from('dh_user_data').upsert({
         user_id: user.id,
         data: { debts, subscriptions, extraPayment, monthlyIncome, behaviorProof, consolidationRate, consolidationUnlocked, buckets, achievements },
-        updated_at: new Date().toISOString(),
+        updated_at: now,
       })
     }, 1500)
     return () => clearTimeout(timer)
@@ -255,6 +264,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   // ── Derived values ───────────────────────────────────────────────────────
   const dolpPlan = calculatePayoffPlan(debts, extraPayment)
   const totalDebt = debts.filter(d => !d.paid_off).reduce((s, d) => s + d.balance, 0)
+  const interestComparison = calculateInterestComparison(debts, extraPayment)
   const debtFreeMonths = dolpPlan?.total_months ?? 0
 
   const fullyProven = behaviorProof.cardClosed && behaviorProof.extraPayments >= 2 && behaviorProof.noCreditDays >= 30
@@ -271,15 +281,23 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const addDebt = () => {
-    if (!newDebt.name || !newDebt.balance) return
-    setDebts(p => [...p, { id: Date.now(), name: newDebt.name, balance: parseFloat(newDebt.balance), interest_rate: parseFloat(newDebt.interest_rate) || 0, min_payment: parseFloat(newDebt.min_payment) || 200, type: newDebt.type || '', paid_off: false }])
+    const name = newDebt.name.trim()
+    const balance = parseFloat(newDebt.balance)
+    if (!name || !balance || balance <= 0) return
+    const interestRate = Math.min(100, Math.max(0, parseFloat(newDebt.interest_rate) || 0))
+    const minPayment = Math.max(1, parseFloat(newDebt.min_payment) || 200)
+    setDebts(p => [...p, { id: crypto.randomUUID(), name: name.slice(0, 100), balance, interest_rate: interestRate, min_payment: minPayment, type: newDebt.type || '', paid_off: false }])
     setNewDebt({ name: '', balance: '', interest_rate: '', min_payment: '', type: '' })
     setShowAddDebtForm(false)
   }
 
   const saveDebt = () => {
-    if (!editDebt.name || !editDebt.balance) return
-    setDebts(p => p.map(d => d.id === editDebtId ? { ...d, name: editDebt.name, balance: parseFloat(editDebt.balance), interest_rate: parseFloat(editDebt.interest_rate) || 0, min_payment: parseFloat(editDebt.min_payment) || 200, type: editDebt.type || '' } : d))
+    const name = editDebt.name.trim()
+    const balance = parseFloat(editDebt.balance)
+    if (!name || !balance || balance <= 0) return
+    const interestRate = Math.min(100, Math.max(0, parseFloat(editDebt.interest_rate) || 0))
+    const minPayment = Math.max(1, parseFloat(editDebt.min_payment) || 200)
+    setDebts(p => p.map(d => d.id === editDebtId ? { ...d, name: name.slice(0, 100), balance, interest_rate: interestRate, min_payment: minPayment, type: editDebt.type || '' } : d))
     setEditDebtId(null)
   }
 
@@ -290,7 +308,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   }
 
   const saveBucket = () => {
-    if (!editBucket.current || !editBucket.goal) return
+    if (editBucket.current === '' || editBucket.goal === '') return
     setBuckets(p => p.map(b => b.type === editBucketType ? { ...b, current: parseFloat(editBucket.current), goal: parseFloat(editBucket.goal) } : b))
     setEditBucketType(null)
   }
@@ -316,10 +334,16 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
     setChatMessages(p => [...p, { role: 'user', text: userMsg }])
     setIsChatLoading(true)
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setChatMessages(p => [...p, { role: 'assistant', text: 'Logga in för att chatta med AI-coachen.' }])
+        setIsChatLoading(false)
+        return
+      }
       const ctx = `Inkomst: ${monthlyIncome} SEK. Skulder: ${debts.filter(d => !d.paid_off).map(d => `${d.name} ${d.balance}kr ${d.interest_rate}%`).join(', ')}. Skuldfri om: ${monthsToText(debtFreeMonths)}. Samlånslåset: ${consolidationUnlocked ? 'upplåst' : 'låst'}.`
       const res = await fetch('/api/claude', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1000,
@@ -327,12 +351,36 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
           messages: [...chatMessages.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })), { role: 'user', content: userMsg }]
         })
       })
+      if (res.status === 401) {
+        setChatMessages(p => [...p, { role: 'assistant', text: 'Logga in för att använda AI-coachen.' }])
+        setIsChatLoading(false)
+        return
+      }
       const data = await res.json()
       setChatMessages(p => [...p, { role: 'assistant', text: data.content?.[0]?.text || 'Håll kursen! Minsta skuld alltid först.' }])
     } catch {
       setChatMessages(p => [...p, { role: 'assistant', text: 'Håll kursen! Minsta skuld alltid först.' }])
     }
     setIsChatLoading(false)
+  }
+
+  const [summaryStatus, setSummaryStatus] = useState(null) // null | 'loading' | 'sent' | 'error'
+
+  const sendSummary = async () => {
+    setSummaryStatus('loading')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setSummaryStatus('error'); return }
+      const res = await fetch('/api/send-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+        body: JSON.stringify({ totalDebt, debtFreeMonths, extraPayment, interestSaved: interestComparison.interestSaved, monthsSaved: interestComparison.monthsSaved, debts }),
+      })
+      setSummaryStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setSummaryStatus('error')
+    }
+    setTimeout(() => setSummaryStatus(null), 4000)
   }
 
   const contentStyle = {
@@ -434,6 +482,10 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
             setExtraPayment={setExtraPayment}
             setMonthlyIncome={setMonthlyIncome}
             setActiveTab={setActiveTab}
+            interestSaved={interestComparison.interestSaved}
+            monthsSaved={interestComparison.monthsSaved}
+            sendSummary={user ? sendSummary : null}
+            summaryStatus={summaryStatus}
           />
         )}
         {activeTab === 'dolp' && (
@@ -511,6 +563,7 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
           <ProgressView
             achievements={achievements}
             behaviorProof={behaviorProof}
+            setBehaviorProof={setBehaviorProof}
             debts={debts}
             subscriptions={subscriptions}
             consolidationUnlocked={consolidationUnlocked}

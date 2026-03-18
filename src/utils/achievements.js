@@ -3,14 +3,14 @@ export const ACHIEVEMENTS = [
   { id: 'first_sub_killed',       emoji: '✂️', title: 'Prenumerationsmördaren', desc: 'Avbröt din första prenumeration',                    color: '#C77B2A' },
   { id: 'card_closed',            emoji: '💳', title: 'Kortklipparen',          desc: 'Klippte eller sade upp kreditkortet',                color: '#E63946' },
   { id: 'first_extra_payment',    emoji: '💰', title: 'Overkill',               desc: 'Gjorde din första extra amortering',                 color: '#F4A261' },
-  { id: 'consolidation_unlocked', emoji: '🔓', title: 'Beteendesegern',         desc: 'Ändrade beteendet — samlånslåset upplåst',           color: '#40916C' },
+  { id: 'consolidation_unlocked', emoji: '🔓', title: 'Beteendesegern',         desc: 'Ändrade beteendet - samlånslåset upplåst',           color: '#40916C' },
   { id: 'day_7',                  emoji: '🗓️', title: 'En veckas styrka',       desc: '7 dagar utan ny kredit',                            color: '#4A9ECC' },
   { id: 'day_30',                 emoji: '🌙', title: 'Månadshjälten',          desc: '30 dagar utan ny kredit',                           color: '#4A9ECC' },
   { id: 'day_100',                emoji: '💯', title: '100-dagarshjälten',      desc: '100 dagar utan ny kredit',                          color: '#8B5CF6' },
   { id: 'buckets_set',            emoji: '🪣', title: 'Trefintaren',            desc: 'Satte mål för alla tre hinkarna',                   color: '#40916C' },
   { id: 'first_debt_paid',        emoji: '🔥', title: 'Första lågan',           desc: 'Betalade av din första skuld helt',                 color: '#F4A261' },
   { id: 'halfway_there',          emoji: '⚡', title: 'Halvtid',                desc: 'Betalat av minst 50% av totalskulden',              color: '#C77B2A' },
-  { id: 'all_debts_paid',         emoji: '🎊', title: 'Skuldfri',               desc: 'Alla skulder är avbetalade — du klarade det!',      color: '#40916C' },
+  { id: 'all_debts_paid',         emoji: '🎊', title: 'Skuldfri',               desc: 'Alla skulder är avbetalade - du klarade det!',      color: '#40916C' },
 ]
 
 export const LEVELS = [

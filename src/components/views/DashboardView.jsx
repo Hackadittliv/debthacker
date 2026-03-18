@@ -4,22 +4,79 @@ import { formatSEK, monthsToText } from '../../utils/math';
 
 export const DashboardView = ({
     debts, subscriptions, extraPayment, monthlyIncome, totalDebt,
-    debtFreeMonths, consolidationUnlocked, setExtraPayment, setMonthlyIncome, setActiveTab
+    debtFreeMonths, consolidationUnlocked, setExtraPayment, setMonthlyIncome,
+    setActiveTab, interestSaved, monthsSaved, sendSummary, summaryStatus
   }) => {
     const { S, C } = useTheme();
     const activeDebts = debts.filter(d => !d.paid_off).length;
     const activeCost = subscriptions.filter(s => s.active).reduce((sum, s) => sum + s.cost, 0);
     const monthlySavingsGoal = Math.round(monthlyIncome * 0.2);
+    const hasDebts = activeDebts > 0;
 
     return (
       <div>
-        <div style={{ ...S.card, padding: "28px 24px", background: C.gradHero, border: "1px solid #F4A26144" }}>
-          <div style={S.label}>Total skuld</div>
-          <div style={{ ...S.bigNum("#F4A261"), fontSize: 40, marginBottom: 12 }}>{formatSEK(totalDebt)}</div>
-          <div style={{ fontSize: 15, color: C.textSecondary }}>
-            Skuldfri om <strong style={{ color: "#F4A261" }}>{monthsToText(debtFreeMonths)}</strong> med {formatSEK(extraPayment)}/mån extra
+        {/* ── Onboarding för nya användare ── */}
+        {!hasDebts && (
+          <div style={{ ...S.card, background: 'linear-gradient(135deg, #1a1000, #161B22)', border: '1px solid #F4A26144', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ fontSize: 44, marginBottom: 12 }}>🔥</div>
+            <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#F4A261', marginBottom: 8 }}>
+              Välkommen till DebtHacker
+            </div>
+            <div style={{ fontSize: 14, color: C.textSecondary, lineHeight: 1.7, maxWidth: 340, margin: '0 auto 24px' }}>
+              Lägg in dina skulder och se exakt när du är skuldfri - och hur mycket du sparar med DOLP-metoden.
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 280, margin: '0 auto' }}>
+              <button
+                onClick={() => setActiveTab('dolp')}
+                style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #F4A261, #E8833A)', border: 'none', borderRadius: 12, color: '#0D1117', fontSize: 15, fontWeight: 800, cursor: 'pointer' }}
+              >
+                Lägg in din första skuld →
+              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => setActiveTab('subs')} style={{ flex: 1, padding: '10px', background: C.bgSunken, border: `1px solid ${C.border}`, borderRadius: 10, color: C.textSecondary, fontSize: 13, cursor: 'pointer' }}>
+                  📱 Hitta prenumerationer
+                </button>
+                <button onClick={() => setActiveTab('buckets')} style={{ flex: 1, padding: '10px', background: C.bgSunken, border: `1px solid ${C.border}`, borderRadius: 10, color: C.textSecondary, fontSize: 13, cursor: 'pointer' }}>
+                  🪣 Sätt sparmål
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* ── Hero-kort: total skuld ── */}
+        {hasDebts && (
+          <div style={{ ...S.card, padding: "28px 24px", background: C.gradHero, border: "1px solid #F4A26144" }}>
+            <div style={S.label}>Total skuld</div>
+            <div style={{ ...S.bigNum("#F4A261"), fontSize: 40, marginBottom: 12 }}>{formatSEK(totalDebt)}</div>
+            <div style={{ fontSize: 15, color: C.textSecondary }}>
+              Skuldfri om <strong style={{ color: "#F4A261" }}>{monthsToText(debtFreeMonths)}</strong> med {formatSEK(extraPayment)}/mån extra
+            </div>
+          </div>
+        )}
+
+        {/* ── Räntebesparing vs minimumbetalningar ── */}
+        {hasDebts && interestSaved > 0 && (
+          <div style={{ ...S.card, background: 'linear-gradient(135deg, #0A1E10, #161B22)', border: '1px solid #40916C44', padding: '20px 22px' }}>
+            <div style={{ fontSize: 11, color: '#40916C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 12 }}>
+              💰 Din DOLP-besparing vs bara minimumbetalningar
+            </div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ flex: 1, background: '#40916C15', borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 4 }}>Räntebesparing</div>
+                <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: '#40916C' }}>
+                  {formatSEK(interestSaved)}
+                </div>
+              </div>
+              <div style={{ flex: 1, background: '#40916C15', borderRadius: 10, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 4 }}>Tid sparad</div>
+                <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: '#40916C' }}>
+                  {monthsToText(monthsSaved)}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div style={{ ...S.g2, marginBottom: 12 }}>
           <button className="card-clickable" onClick={() => setActiveTab('dolp')} style={{ ...S.card, marginBottom: 0, minHeight: 110, cursor: 'pointer', textAlign: 'left' }}>
@@ -85,6 +142,23 @@ export const DashboardView = ({
             Skuldfri om <strong style={{ color: "#F4A261" }}>{monthsToText(debtFreeMonths)}</strong> med denna betalning
           </div>
         </div>
+
+        {sendSummary && (
+          <button
+            onClick={sendSummary}
+            disabled={summaryStatus === 'loading' || summaryStatus === 'sent'}
+            style={{
+              width: '100%', marginTop: 10, padding: '13px 20px',
+              background: summaryStatus === 'sent' ? '#40916C22' : summaryStatus === 'error' ? '#E6394622' : 'transparent',
+              border: `1px solid ${summaryStatus === 'sent' ? '#40916C66' : summaryStatus === 'error' ? '#E6394666' : C.border}`,
+              borderRadius: 12, color: summaryStatus === 'sent' ? '#40916C' : summaryStatus === 'error' ? '#E63946' : C.textSecondary,
+              fontSize: 13, cursor: summaryStatus ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            }}
+          >
+            <span>{summaryStatus === 'loading' ? '⏳' : summaryStatus === 'sent' ? '✅' : summaryStatus === 'error' ? '❌' : '📧'}</span>
+            {summaryStatus === 'loading' ? 'Skickar...' : summaryStatus === 'sent' ? 'Sammanfattning skickad!' : summaryStatus === 'error' ? 'Kunde inte skicka - försök igen' : 'Skicka sammanfattning till din e-post'}
+          </button>
+        )}
       </div>
     );
   };
