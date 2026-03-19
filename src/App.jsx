@@ -279,6 +279,13 @@ function AppShell({ onShowPrivacy, onLogout }) {
       setUser(session?.user ?? null)
       if (event === 'PASSWORD_RECOVERY') setShowNewPassword(true)
       if (event === 'SIGNED_OUT') onLogout()
+      if (event === 'SIGNED_IN' && session?.user?.email) {
+        fetch('/api/subscribe-crm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: session.user.email }),
+        }).catch(() => {})
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
