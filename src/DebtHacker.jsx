@@ -230,8 +230,11 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
     if (!user) return
     supabase.from('dh_user_data').select('data, updated_at').eq('user_id', user.id).single().then(({ data, error }) => {
       if (error && error.code !== 'PGRST116') return // PGRST116 = no rows, expected for new users
+
       if (!data?.data) {
-        // Första inloggning — spara lokal data direkt till molnet
+        // Ingen molndata finns — spara lokal data om den innehåller något
+        const hasLocalData = debts.length > 0 || subscriptions.length > 0 || monthlyIncome > 0
+        if (!hasLocalData) return // spara inte tom data
         const now = new Date().toISOString()
         localStorage.setItem('dh_sync_at', now)
         supabase.from('dh_user_data').upsert({
@@ -241,21 +244,19 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
         })
         return
       }
-      // Använd molndata bara om den är nyare än senaste lokala sparning
-      const cloudUpdatedAt = data.updated_at
-      const localSyncAt = localStorage.getItem('dh_sync_at')
-      if (localSyncAt && cloudUpdatedAt && new Date(cloudUpdatedAt) <= new Date(localSyncAt)) return
+
+      // Molndata finns — ladda alltid ner den (molnet är källan till sanning)
       const d = data.data
-      if (d.debts) setDebts(d.debts)
-      if (d.subscriptions) setSubscriptions(d.subscriptions)
+      if (d.debts?.length > 0) setDebts(d.debts)
+      if (d.subscriptions?.length > 0) setSubscriptions(d.subscriptions)
       if (d.extraPayment !== undefined) setExtraPayment(d.extraPayment)
-      if (d.monthlyIncome !== undefined) setMonthlyIncome(d.monthlyIncome)
+      if (d.monthlyIncome) setMonthlyIncome(d.monthlyIncome)
       if (d.behaviorProof) setBehaviorProof(d.behaviorProof)
       if (d.consolidationRate !== undefined) setConsolidationRate(d.consolidationRate)
       if (d.consolidationUnlocked !== undefined) setConsolidationUnlocked(d.consolidationUnlocked)
       if (d.buckets) setBuckets(d.buckets)
       if (d.achievements) setAchievements(d.achievements)
-      if (cloudUpdatedAt) localStorage.setItem('dh_sync_at', cloudUpdatedAt)
+      if (data.updated_at) localStorage.setItem('dh_sync_at', data.updated_at)
     })
   }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
