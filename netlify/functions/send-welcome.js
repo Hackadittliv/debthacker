@@ -160,6 +160,29 @@ export default async function handler(req) {
     })
   }
 
+  // ── Lägg till i Hackadittliv CRM ──────────────────────────────────────────
+  const hdlApiKey = process.env.HACKADITTLIV_API_KEY
+  if (hdlApiKey) {
+    try {
+      await fetch('https://fcgjhzccucyyrpgggjwj.supabase.co/functions/v1/subscribe-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': hdlApiKey,
+        },
+        body: JSON.stringify({
+          email,
+          source: 'debthacker',
+          tags: ['hdl_newsletter', 'debthacker'],
+          track: 'track_disciplin',
+        }),
+      })
+    } catch (err) {
+      console.error('Hackadittliv CRM error:', err)
+      // Misslyckas tyst — välkomstmailet är redan skickat
+    }
+  }
+
   return new Response(JSON.stringify({ ok: true, id: data.id }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
