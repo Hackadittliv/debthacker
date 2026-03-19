@@ -1,2 +1,5 @@
 # Redirecta Netlify-domänen till debthacker.se
 https://debthacker.netlify.app/* https://debthacker.se/:splat 301!
+
+# Redirecta www till apex-domän
+https://www.debthacker.se/* https://debthacker.se/:splat 301!
