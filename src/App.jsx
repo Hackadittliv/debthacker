@@ -412,7 +412,7 @@ function AppShell({ onShowPrivacy, onLogout }) {
             {!user && (
               <button
                 onClick={() => setShowLoginModal(true)}
-                style={{ fontSize: 11, color: C.textSecondary, background: 'none', border: `1px solid ${C.borderStrong}`, borderRadius: 7, cursor: 'pointer', padding: '4px 9px' }}
+                style={{ fontSize: 13, color: C.textSecondary, background: 'none', border: `1px solid ${C.borderStrong}`, borderRadius: 8, cursor: 'pointer', padding: '7px 13px', minHeight: 36 }}
               >
                 ☁️ Logga in
               </button>
@@ -465,20 +465,21 @@ function AppShell({ onShowPrivacy, onLogout }) {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 2,
-                  padding: '7px 2px',
+                  gap: 3,
+                  padding: '10px 2px 8px',
                   background: 'none',
                   border: 'none',
                   borderTop: active ? '2px solid #F4A261' : '2px solid transparent',
                   color: active ? '#F4A261' : C.textSecondary,
                   cursor: 'pointer',
-                  fontSize: 9,
-                  fontWeight: active ? 600 : 400,
+                  fontSize: 11,
+                  fontWeight: active ? 700 : 400,
                   fontFamily: "'DM Sans', sans-serif",
+                  minHeight: 60,
                 }}
               >
-                <span style={{ fontSize: 20 }}>{t.emoji}</span>
-                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 52 }}>
+                <span style={{ fontSize: 24 }}>{t.emoji}</span>
+                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 56 }}>
                   {t.label}
                 </span>
               </button>
