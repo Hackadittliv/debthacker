@@ -142,9 +142,10 @@ export default async function handler(req) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'DebtHacker <noreply@debthacker.se>',
+      from: 'Din ekonomiplan <hej@debthacker.se>',
+      reply_to: 'hej@debthacker.se',
       to: [email],
-      subject: 'Välkommen till DebtHacker 🔥 — din skuldfria resa börjar nu',
+      subject: 'Välkommen - din skuldfria resa börjar nu',
       html: WELCOME_HTML(email),
     }),
   })

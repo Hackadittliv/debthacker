@@ -195,9 +195,10 @@ export default async function handler(req) {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: 'DebtHacker <noreply@debthacker.se>',
+      from: 'Din ekonomiplan <hej@debthacker.se>',
+      reply_to: 'hej@debthacker.se',
       to: [email],
-      subject: `Din skuldfria resa: ${totalDebt > 0 ? `${Math.round(totalDebt / 1000)}k kr kvar` : 'Skuldfri!'} 🔥`,
+      subject: `Din skuldfria resa: ${totalDebt > 0 ? `${Math.round(totalDebt / 1000)}k kr kvar` : 'Du är skuldfri!'}`,
       html: SUMMARY_HTML({ totalDebt, debtFreeMonths, extraPayment, interestSaved, monthsSaved, debts }),
     }),
   })
