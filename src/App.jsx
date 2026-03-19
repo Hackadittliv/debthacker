@@ -289,6 +289,11 @@ function AppShell({ onShowPrivacy, onLogout }) {
     onLogout()
   }
 
+  const switchTab = (id) => {
+    setActiveTab(id)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
+
   const tabsWithDynamic = TABS.map(t =>
     t.id === 'consolidation'
       ? { ...t, emoji: consolidationUnlocked ? '🔓' : '🔒' }
@@ -330,7 +335,7 @@ function AppShell({ onShowPrivacy, onLogout }) {
               return (
                 <button
                   key={t.id}
-                  onClick={() => setActiveTab(t.id)}
+                  onClick={() => switchTab(t.id)}
                   className={`sidebar-nav-btn${active ? ' active' : ''}`}
                   style={{
                     width: '100%',
@@ -458,7 +463,7 @@ function AppShell({ onShowPrivacy, onLogout }) {
             return (
               <button
                 key={t.id}
-                onClick={() => setActiveTab(t.id)}
+                onClick={() => switchTab(t.id)}
                 style={{
                   flex: 1,
                   display: 'flex',
