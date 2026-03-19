@@ -143,8 +143,8 @@ export default function DebtHacker({ activeTab, setActiveTab, isDesktop, consoli
   const { S, C } = useTheme()
 
   const [debts, setDebts] = useState(() => lsGet('dh_debts', DEFAULT_DEBTS))
-  const [extraPayment, setExtraPayment] = useState(() => lsGet('dh_extra', 2000))
-  const [monthlyIncome, setMonthlyIncome] = useState(() => lsGet('dh_income', 38000))
+  const [extraPayment, setExtraPayment] = useState(() => lsGet('dh_extra', 0))
+  const [monthlyIncome, setMonthlyIncome] = useState(() => lsGet('dh_income', 0))
   const [subscriptions, setSubscriptions] = useState(() => lsGet('dh_subs', DEFAULT_SUBS))
   const [buckets, setBuckets] = useState(() => lsGet('dh_buckets', DEFAULT_BUCKETS))
   const [behaviorProof, setBehaviorProof] = useState(() => lsGet('dh_behavior', { cardClosed: false, extraPayments: 0, noCreditDays: 0 }))
