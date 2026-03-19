@@ -52,6 +52,16 @@ Använd dessa snippets i alla produkter under Conversify-paraplyet.
 
 ---
 
+## Ren HTML — endast Conversify (engelska)
+
+```html
+<footer style="text-align:center;font-size:11px;color:#4B5563;padding:24px 20px;">
+  Built by <a href="https://conversify.io" style="color:#13c8ec;text-decoration:none;">Conversify.io</a>
+</footer>
+```
+
+---
+
 ## Färger
 
 | Brand         | Hex       | Användning         |
@@ -59,6 +69,19 @@ Använd dessa snippets i alla produkter under Conversify-paraplyet.
 | Hackadittliv  | `#F2B8B4` | Rosa accent        |
 | Conversify.io | `#13c8ec` | Cyan accent        |
 | Textfärg dim  | `#4B5563` | Omgivande text     |
+
+---
+
+## Regler
+
+| Situation | Text |
+|---|---|
+| Svenska sajter / appar | "Byggt av Conversify.io" |
+| Engelska sajter / appar | "Built by Conversify.io" |
+| Konsumentprodukter kopplade till Hackadittliv | "En produkt från Hackadittliv · Byggt av Conversify.io" |
+| Kunduppdrag / B2B / andra varumärkens produkter | Endast "Byggt av Conversify.io" |
+
+Använd ALDRIG "Powered by" — det är uttjatat och inte på svenska.
 
 ---
 
