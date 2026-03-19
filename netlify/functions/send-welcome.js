@@ -172,9 +172,9 @@ export default async function handler(req) {
         },
         body: JSON.stringify({
           email,
-          source: 'debthacker',
-          tags: ['hdl_newsletter', 'debthacker'],
-          track: 'track_disciplin',
+          source: 'debthackers',
+          tags: ['hdl_newsletter'],
+          track: 'debthackers',
         }),
       })
     } catch (err) {
