@@ -442,7 +442,9 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
       <footer style={{ padding: '24px 20px', textAlign: 'center', borderTop: `1px solid ${C.border}` }}>
         <div style={{ fontSize: 11, color: C.textDim, lineHeight: 2.2 }}>
           DebtHacker.se · DOLP-skuldsläckningsmetoden<br />
-          <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Powered by Conversify.io</a>
+          En produkt från <a href="https://hackadittliv.se" target="_blank" rel="noreferrer" style={{ color: '#F4A261', textDecoration: 'none' }}>Hackadittliv</a>
+          <span style={{ margin: '0 6px', color: C.border }}>·</span>
+          Byggt av <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Conversify.io</a>
           <span style={{ margin: '0 8px', color: C.border }}>·</span>
           <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: '#4A9ECC', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
             Integritetspolicy

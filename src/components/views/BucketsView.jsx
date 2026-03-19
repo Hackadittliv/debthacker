@@ -149,8 +149,8 @@ export const BucketsView = ({
                     </div>
                   </div>
 
-                  {/* Affiliate-kort för pensionshinken */}
-                  {b.type === 'pension' && (
+                  {/* Affiliate-kort för pensionshinken — dölj tills affiliate-länkar är klara */}
+                  {false && b.type === 'pension' && (
                     <div style={{ marginTop: 12 }}>
                       <div style={{ fontSize: 11, color: C.textMuted, textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 700, marginBottom: 8 }}>
                         Öppna ett investeringskonto
