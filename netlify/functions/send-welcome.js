@@ -92,7 +92,7 @@ const WELCOME_HTML = (email) => `<!DOCTYPE html>
                 Du får det här mejlet för att du registrerade dig på debthacker.se
               </p>
               <p style="margin:0;font-size:12px;color:#4B5563;">
-                En produkt från <a href="https://hackadittliv.se" style="color:#F4A261;text-decoration:none;">Hackadittliv</a> · Byggt av <a href="https://conversify.io" style="color:#4A9ECC;text-decoration:none;">Conversify.io</a>
+                En produkt från <a href="https://hackadittliv.se" style="color:#F2B8B4;text-decoration:none;">Hackadittliv</a> · Byggt av <a href="https://conversify.io" style="color:#13c8ec;text-decoration:none;">Conversify.io</a>
               </p>
             </td>
           </tr>

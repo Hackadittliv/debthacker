@@ -389,9 +389,9 @@ function AppShell({ onShowPrivacy, onLogout }) {
             )}
             <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.6 }}>
               DOLP-skuldsläckningsmetoden<br />
-              En produkt från <a href="https://hackadittliv.se" target="_blank" rel="noreferrer" style={{ color: '#F4A261', textDecoration: 'none' }}>Hackadittliv</a>
+              En produkt från <a href="https://hackadittliv.se" target="_blank" rel="noreferrer" style={{ color: '#F2B8B4', textDecoration: 'none' }}>Hackadittliv</a>
               <span style={{ margin: '0 5px', color: C.borderStrong }}>·</span>
-              Byggt av <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#4A9ECC', textDecoration: 'none' }}>Conversify.io</a>
+              Byggt av <a href="https://conversify.io" target="_blank" rel="noreferrer" style={{ color: '#13c8ec', textDecoration: 'none' }}>Conversify.io</a>
             </div>
           </div>
         </aside>
