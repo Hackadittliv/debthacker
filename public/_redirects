@@ -1,0 +1,2 @@
+# Redirecta Netlify-domänen till debthacker.se
+https://debthacker.netlify.app/* https://debthacker.se/:splat 301!
