@@ -144,20 +144,25 @@ export const DashboardView = ({
         </div>
 
         {sendSummary && (
-          <button
-            onClick={sendSummary}
-            disabled={summaryStatus === 'loading' || summaryStatus === 'sent'}
-            style={{
-              width: '100%', marginTop: 10, padding: '13px 20px',
-              background: summaryStatus === 'sent' ? '#40916C22' : summaryStatus === 'error' ? '#E6394622' : 'transparent',
-              border: `1px solid ${summaryStatus === 'sent' ? '#40916C66' : summaryStatus === 'error' ? '#E6394666' : C.border}`,
-              borderRadius: 12, color: summaryStatus === 'sent' ? '#40916C' : summaryStatus === 'error' ? '#E63946' : C.textSecondary,
-              fontSize: 13, cursor: summaryStatus ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            }}
-          >
-            <span>{summaryStatus === 'loading' ? '⏳' : summaryStatus === 'sent' ? '✅' : summaryStatus === 'error' ? '❌' : '📧'}</span>
-            {summaryStatus === 'loading' ? 'Skickar...' : summaryStatus === 'sent' ? 'Sammanfattning skickad!' : summaryStatus === 'error' ? 'Kunde inte skicka - försök igen' : 'Skicka sammanfattning till din e-post'}
-          </button>
+          <div style={{ marginTop: 12 }}>
+            <button
+              onClick={sendSummary}
+              disabled={summaryStatus === 'loading' || summaryStatus === 'sent'}
+              style={{
+                width: '100%', padding: '14px 20px',
+                background: summaryStatus === 'sent' ? '#40916C22' : summaryStatus === 'error' ? '#E6394622' : C.bgElevated,
+                border: `1px solid ${summaryStatus === 'sent' ? '#40916C66' : summaryStatus === 'error' ? '#E6394666' : C.borderStrong}`,
+                borderRadius: 12, color: summaryStatus === 'sent' ? '#40916C' : summaryStatus === 'error' ? '#E63946' : C.textPrimary,
+                fontSize: 14, fontWeight: 600, cursor: summaryStatus ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+            >
+              <span>{summaryStatus === 'loading' ? '⏳' : summaryStatus === 'sent' ? '✅' : summaryStatus === 'error' ? '❌' : '📧'}</span>
+              {summaryStatus === 'loading' ? 'Skickar...' : summaryStatus === 'sent' ? 'Sammanfattning skickad!' : summaryStatus === 'error' ? 'Kunde inte skicka - försök igen' : 'Skicka sammanfattning till din e-post'}
+            </button>
+            <div style={{ fontSize: 12, color: C.textMuted, textAlign: 'center', marginTop: 6, lineHeight: 1.5 }}>
+              Få din skuldplan, sparprognos och DOLP-beräkning direkt i inkorgen.
+            </div>
+          </div>
         )}
       </div>
     );
