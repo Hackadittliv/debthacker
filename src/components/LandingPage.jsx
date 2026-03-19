@@ -157,7 +157,7 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
             Logga in
           </button>
           <button
-            onClick={onStart}
+            onClick={onLogin}
             style={{
               background: '#F4A261', color: '#0D1117', border: 'none', borderRadius: 20,
               padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
