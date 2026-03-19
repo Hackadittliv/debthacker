@@ -612,16 +612,10 @@ Användarens kontext: ${ctx}`,
           />
         )}
 
-        {activeTab === 'dashboard' && (
-          <div style={{ textAlign: 'center', marginTop: 8, display: 'flex', justifyContent: 'center', gap: 16 }}>
-            <button onClick={() => setShowResetConfirm(true)} style={{ background: 'none', border: 'none', fontSize: 11, color: C.border, cursor: 'pointer', padding: '4px 8px' }}>
+        {activeTab === 'progress' && (
+          <div style={{ textAlign: 'center', marginTop: 24 }}>
+            <button onClick={() => setShowResetConfirm(true)} style={{ background: 'none', border: 'none', fontSize: 11, color: C.textDim, cursor: 'pointer', padding: '4px 8px' }}>
               Rensa all data
-            </button>
-            <button
-              onClick={() => { try { localStorage.removeItem('dh_skipped_landing') } catch {} window.location.reload() }}
-              style={{ background: 'none', border: 'none', fontSize: 11, color: C.border, cursor: 'pointer', padding: '4px 8px' }}
-            >
-              Visa startsidan
             </button>
           </div>
         )}
