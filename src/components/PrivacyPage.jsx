@@ -70,7 +70,7 @@ export function PrivacyPage({ onBack }) {
             Conversify.io ansvarar för behandlingen av dina personuppgifter inom DebtHacker.se.
           </p>
           <p style={{ margin: 0 }}>
-            Kontakt: <a href="mailto:hej@conversify.io" style={{ color: '#4A9ECC' }}>hej@conversify.io</a>
+            Kontakt: <a href="mailto:info@conversify.io" style={{ color: '#4A9ECC' }}>info@conversify.io</a>
           </p>
         </Section>
 
@@ -149,7 +149,7 @@ export function PrivacyPage({ onBack }) {
             <li><strong style={{ color: C.textPrimary }}>Rätt att lämna klagomål</strong> - till Integritetsskyddsmyndigheten (IMY): imy.se</li>
           </ul>
           <p style={{ margin: '16px 0 0', color: C.textMuted, fontSize: 13 }}>
-            Skicka förfrågningar till <a href="mailto:hej@conversify.io" style={{ color: '#4A9ECC' }}>hej@conversify.io</a>. Vi svarar inom 30 dagar.
+            Skicka förfrågningar till <a href="mailto:info@conversify.io" style={{ color: '#4A9ECC' }}>info@conversify.io</a>. Vi svarar inom 30 dagar.
           </p>
         </Section>
 
@@ -172,7 +172,7 @@ export function PrivacyPage({ onBack }) {
           <div style={{ fontWeight: 600, color: C.textPrimary, marginBottom: 6 }}>Kontakt</div>
           <div style={{ fontSize: 14, color: C.textSecondary, lineHeight: 1.7 }}>
             Frågor om integritet och dataskydd:<br />
-            <a href="mailto:hej@conversify.io" style={{ color: '#4A9ECC' }}>hej@conversify.io</a><br />
+            <a href="mailto:info@conversify.io" style={{ color: '#4A9ECC' }}>info@conversify.io</a><br />
             Conversify.io - ansvarig för DebtHacker.se
           </div>
         </div>
