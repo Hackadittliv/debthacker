@@ -423,7 +423,12 @@ function AppShell({ onShowPrivacy, onLogout }) {
               </button>
             )}
             {user && (
-              <span style={{ fontSize: 11, color: '#40916C' }}>☁️</span>
+              <button
+                onClick={handleLogout}
+                style={{ fontSize: 12, color: '#40916C', background: 'none', border: `1px solid #40916C44`, borderRadius: 8, cursor: 'pointer', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: 5, minHeight: 36 }}
+              >
+                ☁️ <span style={{ color: C.textSecondary }}>Logga ut</span>
+              </button>
             )}
             <ThemeToggle />
           </div>
