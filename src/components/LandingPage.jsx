@@ -236,7 +236,9 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
                 100% gratis · Ingen spam · <span style={{ cursor: 'pointer', textDecoration: 'underline', color: 'rgba(255,255,255,0.4)' }} onClick={onStart}>Hoppa över, starta utan konto</span>
               </div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
-                Genom att ange din e-post godkänner du vår{' '}
+                Genom att starta godkänner du att vi skickar ekonomitips från{' '}
+                <a href="https://hackadittliv.se" target="_blank" rel="noreferrer" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'underline' }}>Hackadittliv</a>
+                {' '}och vår{' '}
                 <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
                   integritetspolicy
                 </button>.
