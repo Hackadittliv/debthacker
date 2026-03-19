@@ -92,33 +92,40 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
   const [emailSent, setEmailSent] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [email2, setEmail2] = useState('');
+  const [emailSent2, setEmailSent2] = useState(false);
+  const [emailLoading2, setEmailLoading2] = useState(false);
+  const [emailError2, setEmailError2] = useState('');
+  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     const t = setTimeout(() => setShowFomo(true), 4000);
     return () => clearTimeout(t);
   }, []);
 
-  const handleEmailStart = async () => {
-    const trimmed = email.trim();
+  const sendOtp = async (emailVal, setLoading, setError, setSent) => {
+    const trimmed = emailVal.trim();
     if (!trimmed) { onStart(); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(trimmed)) { setEmailError('Ange en giltig e-postadress'); return; }
-    setEmailLoading(true);
-    setEmailError('');
+    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(trimmed)) { setError('Ange en giltig e-postadress'); return; }
+    setLoading(true);
+    setError('');
     const { error } = await supabase.auth.signInWithOtp({
       email: trimmed,
       options: { emailRedirectTo: window.location.origin },
     });
-    setEmailLoading(false);
-    if (error) { setEmailError('Något gick fel. Försök igen.'); return; }
-    // Fire welcome email — non-blocking, failure is silent
+    setLoading(false);
+    if (error) { setError('Något gick fel. Försök igen.'); return; }
     fetch('/api/send-welcome', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: trimmed }),
     }).catch(() => {});
-    setEmailSent(true);
+    setSent(true);
     setTimeout(() => onStart(), 1800);
   };
+
+  const handleEmailStart = () => sendOtp(email, setEmailLoading, setEmailError, setEmailSent);
+  const handleEmailStart2 = () => sendOtp(email2, setEmailLoading2, setEmailError2, setEmailSent2);
 
   const maxW = 680;
 
@@ -206,7 +213,7 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
               <div style={{ display: 'flex', gap: 8, width: '100%' }}>
                 <input
                   type="email"
-                  placeholder="din@mejl.se (valfritt)"
+                  placeholder="din@mejl.se"
                   value={email}
                   onChange={e => { setEmail(e.target.value); setEmailError(''); }}
                   onKeyDown={e => e.key === 'Enter' && handleEmailStart()}
@@ -255,8 +262,8 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
         padding: '32px 20px',
       }}>
         <div style={{ maxWidth: maxW, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-          <StatCounter value={847} suffix="+" label="Skulder hackade" />
-          <StatCounter value={2340} suffix=" kr" label="Snittbesparing/mån" />
+          <StatCounter value={5} suffix=" min" label="Att komma igång" />
+          <StatCounter value={100} suffix="%" label="Gratis alltid" />
           <StatCounter value={100} suffix=" dagar" label="Till ny vana" />
         </div>
       </section>
@@ -341,6 +348,33 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
             desc="Ställ frågor om din skuldsituation och få personliga råd baserade på DOLP-principerna - dygnet runt."
             accent="#4A9ECC"
           />
+          <FeatureCard
+            emoji="📲"
+            title="Installera som app"
+            desc="Lägg till DebtHacker på hemskärmen — fungerar som en riktig app utan App Store. iPhone: Safari → dela → 'Lägg till på hemskärmen'. Android: Chrome → meny → 'Lägg till på startskärmen'."
+            accent="#40916C"
+          />
+        </div>
+      </section>
+
+      {/* ── SOCIAL PROOF ── */}
+      <section style={{ padding: '0 20px 56px', maxWidth: maxW, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ fontSize: 12, color: '#F4A261', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>Vad användare säger</div>
+          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: C.textPrimary, margin: 0 }}>Riktiga människor. Riktiga resultat.</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
+          {[
+            { name: 'Sara L.', text: 'Äntligen förstår jag varför jag ska betala Klarna innan CSN. DOLP-planen var ett ögonöppnande moment.', stars: 5 },
+            { name: 'Marcus T.', text: 'Hittade tre prenumerationer jag glömt. 890 kr i månaden bara där. Appen betalar sig på en dag.', stars: 5 },
+            { name: 'Emma K.', text: 'Har haft skulder i 6 år utan plan. Nu vet jag exakt vilket datum jag är skuldfri. Det känns otroligt.', stars: 5 },
+          ].map(r => (
+            <div key={r.name} style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, padding: '20px' }}>
+              <div style={{ color: '#F4A261', fontSize: 14, marginBottom: 10 }}>{'★'.repeat(r.stars)}</div>
+              <p style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.7, margin: '0 0 12px', fontStyle: 'italic' }}>"{r.text}"</p>
+              <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600 }}>— {r.name}</div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -395,6 +429,36 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
         </div>
       </section>
 
+      {/* ── FAQ ── */}
+      <section style={{ padding: '0 20px 56px', maxWidth: maxW, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ fontSize: 12, color: '#4A9ECC', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>Vanliga frågor</div>
+          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: C.textPrimary, margin: 0 }}>Allt du undrar över</h2>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[
+            { q: 'Är DebtHacker verkligen gratis?', a: 'Ja, helt gratis. Inga dolda avgifter, inget kreditkort, inga begränsningar. Vi finansieras av frivilliga affiliatelänkar.' },
+            { q: 'Var sparas min data?', a: 'Lokalt i din webbläsare som standard. Loggar du in sparas datan i molnet och synkas mellan enheter — fortfarande bara tillgänglig för dig.' },
+            { q: 'Fungerar det som en app på telefonen?', a: 'Ja! Öppna debthacker.se i Safari (iPhone) eller Chrome (Android), tryck på dela/meny-ikonen och välj "Lägg till på hemskärmen". Då fungerar det precis som en vanlig app.' },
+            { q: 'Vad är DOLP-metoden?', a: 'DOLP (Done On Last Payment) är en skuldsläckningsmetod som fokuserar på att betala av den skuld som tar kortast tid att lösa. Varje betald skuld rullas till nästa — snöbollseffekten gör dig skuldfri snabbare.' },
+            { q: 'Behöver jag registrera mig?', a: 'Nej. Du kan använda appen helt utan konto. Registrerar du dig får du molnsynk och välkomstmail med din plan.' },
+          ].map((item, i) => (
+            <div key={i} style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden' }}>
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '16px 20px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
+              >
+                <span style={{ fontSize: 14, fontWeight: 600, color: C.textPrimary }}>{item.q}</span>
+                <span style={{ fontSize: 18, color: C.textMuted, flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
+              </button>
+              {openFaq === i && (
+                <div style={{ padding: '0 20px 16px', fontSize: 13, color: C.textSecondary, lineHeight: 1.7 }}>{item.a}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── FOMO BANNER ── */}
       {showFomo && (
         <section style={{
@@ -419,24 +483,58 @@ export function LandingPage({ onStart, onShowPrivacy, onLogin }) {
             Börja hacka dina skulder idag
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginBottom: 32, lineHeight: 1.7 }}>
-            Gratis. Ingen registrering. Inga tricks. Bara en tydlig plan för att bli skuldfri snabbare.
+            Gratis. Inga tricks. Bara en tydlig plan för att bli skuldfri snabbare.
           </p>
-          <button
-            onClick={onStart}
-            style={{
-              background: 'linear-gradient(135deg, #F4A261, #E8833A)',
-              color: '#0D1117', border: 'none', borderRadius: 14,
-              padding: '18px 40px', fontSize: 18, fontWeight: 800,
-              cursor: 'pointer', letterSpacing: -0.3,
-              boxShadow: '0 8px 40px #F4A26150',
-              display: 'inline-block',
-            }}
-          >
-            Starta gratis nu →
-          </button>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 14 }}>
-            Din data sparas lokalt i webbläsaren. Logga in för molnsynk.
-          </div>
+          {emailSent2 ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>📬</div>
+              <div style={{ fontSize: 15, color: '#fff', fontWeight: 600, marginBottom: 4 }}>Kolla din mejl!</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Vi skickade en inloggningslänk. Tar dig till appen nu...</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
+              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                <input
+                  type="email"
+                  placeholder="din@mejl.se"
+                  value={email2}
+                  onChange={e => { setEmail2(e.target.value); setEmailError2(''); }}
+                  onKeyDown={e => e.key === 'Enter' && handleEmailStart2()}
+                  style={{
+                    flex: 1, padding: '14px 16px',
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: 12, fontSize: 15, color: '#fff', outline: 'none',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                />
+                <button
+                  onClick={handleEmailStart2}
+                  disabled={emailLoading2}
+                  style={{
+                    background: 'linear-gradient(135deg, #F4A261, #E8833A)',
+                    color: '#0D1117', border: 'none', borderRadius: 12,
+                    padding: '14px 22px', fontSize: 15, fontWeight: 800,
+                    cursor: emailLoading2 ? 'wait' : 'pointer', whiteSpace: 'nowrap',
+                    boxShadow: '0 6px 24px #F4A26145',
+                  }}
+                >
+                  {emailLoading2 ? '...' : 'Starta →'}
+                </button>
+              </div>
+              {emailError2 && <div style={{ fontSize: 12, color: '#F4A261' }}>{emailError2}</div>}
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', textAlign: 'center' }}>
+                100% gratis · <span style={{ cursor: 'pointer', textDecoration: 'underline', color: 'rgba(255,255,255,0.4)' }} onClick={onStart}>Hoppa över, starta utan konto</span>
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
+                Genom att starta godkänner du att vi skickar ekonomitips från{' '}
+                <a href="https://hackadittliv.se" target="_blank" rel="noreferrer" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'underline' }}>Hackadittliv</a>
+                {' '}och vår{' '}
+                <button onClick={onShowPrivacy} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+                  integritetspolicy
+                </button>.
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
