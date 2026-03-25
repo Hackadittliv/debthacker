@@ -80,16 +80,16 @@ export const DOLPView = ({
                   </select>
 
                   <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Nuvarande saldo (kr)</div>
-                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editDebt.balance} onChange={e => setEditDebt(p => ({ ...p, balance: e.target.value }))} />
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" inputMode="decimal" placeholder="0" value={editDebt.balance} onChange={e => setEditDebt(p => ({ ...p, balance: e.target.value }))} />
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                     <div>
                       <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Ränta (%)</div>
-                      <input style={S.input} type="number" placeholder="0" value={editDebt.interest_rate} onChange={e => setEditDebt(p => ({ ...p, interest_rate: e.target.value }))} />
+                      <input style={S.input} type="number" inputMode="decimal" placeholder="0" value={editDebt.interest_rate} onChange={e => setEditDebt(p => ({ ...p, interest_rate: e.target.value }))} />
                     </div>
                     <div>
                       <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Minbetalning (kr)</div>
-                      <input style={S.input} type="number" placeholder="200" value={editDebt.min_payment} onChange={e => setEditDebt(p => ({ ...p, min_payment: e.target.value }))} />
+                      <input style={S.input} type="number" inputMode="decimal" placeholder="200" value={editDebt.min_payment} onChange={e => setEditDebt(p => ({ ...p, min_payment: e.target.value }))} />
                     </div>
                   </div>
 

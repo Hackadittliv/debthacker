@@ -123,6 +123,7 @@ export const DashboardView = ({
             <div style={{ fontSize: 13, color: C.textMuted }}>Din månadsinkomst (netto)</div>
             <input
               type="number"
+              inputMode="decimal"
               value={monthlyIncome}
               onChange={e => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
               style={{ background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 8, padding: '4px 10px', fontSize: 14, fontWeight: 600, color: C.textPrimary, width: 110, textAlign: 'right', outline: 'none' }}

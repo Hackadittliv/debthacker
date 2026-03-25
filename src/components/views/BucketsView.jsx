@@ -28,6 +28,7 @@ export const BucketsView = ({
         <div style={{ fontSize: 13, fontWeight: 600, color: C.textSecondary }}>Din månadsinkomst (netto)</div>
         <input
           type="number"
+          inputMode="decimal"
           value={monthlyIncome}
           onChange={e => setMonthlyIncome(Math.max(0, Number(e.target.value)))}
           style={{ background: C.bgSunken, border: `1px solid ${C.borderStrong}`, borderRadius: 8, padding: '5px 10px', fontSize: 15, fontWeight: 700, color: '#40916C', width: 120, textAlign: 'right', outline: 'none' }}
@@ -55,9 +56,9 @@ export const BucketsView = ({
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{b.emoji} {b.label}</div>
                   <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Nuvarande saldo (kr)</div>
-                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editBucket.current} onChange={e => setEditBucket(p => ({ ...p, current: e.target.value }))} />
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" inputMode="decimal" placeholder="0" value={editBucket.current} onChange={e => setEditBucket(p => ({ ...p, current: e.target.value }))} />
                   <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 3, fontWeight: 600 }}>Mål (kr)</div>
-                  <input style={{ ...S.input, marginBottom: 10 }} type="number" placeholder="0" value={editBucket.goal} onChange={e => setEditBucket(p => ({ ...p, goal: e.target.value }))} />
+                  <input style={{ ...S.input, marginBottom: 10 }} type="number" inputMode="decimal" placeholder="0" value={editBucket.goal} onChange={e => setEditBucket(p => ({ ...p, goal: e.target.value }))} />
                   <div style={S.row}>
                     <button style={S.btn("primary")} onClick={saveBucket}><Icon name="check" size={13} color="#0D1117" />Spara</button>
                     <button style={S.btn("ghost")} onClick={() => setEditBucketType(null)}>Avbryt</button>
@@ -108,6 +109,7 @@ export const BucketsView = ({
                             <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>Årsränta (%)</div>
                             <input
                               type="number"
+                              inputMode="decimal"
                               min={0}
                               max={30}
                               step={0.5}
@@ -120,6 +122,7 @@ export const BucketsView = ({
                             <div style={{ fontSize: 11, color: C.textMuted, marginBottom: 4, fontWeight: 600 }}>Antal år</div>
                             <input
                               type="number"
+                              inputMode="numeric"
                               min={1}
                               max={50}
                               step={1}
