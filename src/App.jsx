@@ -139,8 +139,8 @@ function LoginModal({ onClose, onShowPrivacy }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: C.overlayBg, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: 28, maxWidth: 360, width: '100%', position: 'relative' }}>
+    <div style={{ position: 'fixed', inset: 0, background: C.overlayBg, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, boxSizing: 'border-box' }}>
+      <div style={{ background: C.bgCard, border: `1px solid ${C.borderStrong}`, borderRadius: 20, padding: '24px 20px', maxWidth: 360, width: '100%', position: 'relative', boxSizing: 'border-box', maxHeight: '90vh', overflowY: 'auto' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: C.textMuted, lineHeight: 1, padding: 4 }}>✕</button>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#F4A261', marginBottom: 6 }}>
           🔥 {mode === 'login' ? 'Logga in' : 'Skapa konto'}
@@ -471,6 +471,10 @@ function AppShell({ onShowPrivacy, onLogout }) {
           background: C.bgApp,
           borderTop: `1px solid ${C.border}`,
           display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
           zIndex: 100,
         }}>
           {tabsWithDynamic.map(t => {
@@ -480,13 +484,14 @@ function AppShell({ onShowPrivacy, onLogout }) {
                 key={t.id}
                 onClick={() => switchTab(t.id)}
                 style={{
-                  flex: 1,
+                  flex: '0 0 auto',
+                  minWidth: 64,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 3,
-                  padding: '10px 2px 8px',
+                  padding: '10px 8px 8px',
                   background: 'none',
                   border: 'none',
                   borderTop: active ? '2px solid #F4A261' : '2px solid transparent',
@@ -496,12 +501,11 @@ function AppShell({ onShowPrivacy, onLogout }) {
                   fontWeight: active ? 700 : 400,
                   fontFamily: "'DM Sans', sans-serif",
                   minHeight: 60,
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <span style={{ fontSize: 24 }}>{t.emoji}</span>
-                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 56 }}>
-                  {t.label}
-                </span>
+                <span style={{ fontSize: 22 }}>{t.emoji}</span>
+                <span>{t.label}</span>
               </button>
             )
           })}

@@ -57,6 +57,7 @@ export const CashFlowView = ({ monthlyIncome, setMonthlyIncome, debts }) => {
             value={monthlyIncome || ''}
             onChange={e => setMonthlyIncome(Math.max(0, parseInt(e.target.value) || 0))}
             placeholder="35000"
+            inputMode="decimal"
             style={{ ...S.input, flex: 1, fontSize: 20, fontWeight: 700 }}
           />
           <span style={{ color: C.textSecondary, fontSize: 15 }}>kr/mån</span>
@@ -78,6 +79,7 @@ export const CashFlowView = ({ monthlyIncome, setMonthlyIncome, debts }) => {
                 value={costs[cat.id] || ''}
                 onChange={e => updateCost(cat.id, e.target.value)}
                 placeholder="0"
+                inputMode="decimal"
                 style={{ ...S.input, width: 110, textAlign: 'right' }}
               />
               <span style={{ fontSize: 13, color: C.textSecondary, width: 20 }}>kr</span>
