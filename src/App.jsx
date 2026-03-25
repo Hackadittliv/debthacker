@@ -10,6 +10,7 @@ const TABS = [
   { id: 'dolp',         label: 'Skulder',  emoji: '🔥' },
   { id: 'consolidation',label: 'Samlån',   emoji: null },
   { id: 'buckets',      label: 'Hinkar',   emoji: '🪣' },
+  { id: 'cashflow',     label: 'Pengaflöde', emoji: '💰' },
   { id: 'subs',         label: 'Subs',     emoji: '📱' },
   { id: 'progress',     label: 'Framsteg', emoji: '🏆' },
   { id: 'coach',        label: 'Coach',    emoji: '🤖' },

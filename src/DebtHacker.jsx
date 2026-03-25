@@ -4,6 +4,7 @@ import { calculatePayoffPlan, monthsToText, calculateInterestComparison } from '
 import { checkAchievements } from './utils/achievements.js'
 import { useTheme } from './context/ThemeContext.jsx'
 import { DashboardView } from './components/views/DashboardView.jsx'
+import { CashFlowView } from './components/views/CashFlowView.jsx'
 import { DOLPView } from './components/views/DOLPView.jsx'
 import { ConsolidationView } from './components/views/ConsolidationView.jsx'
 import { BucketsView } from './components/views/BucketsView.jsx'
@@ -570,6 +571,13 @@ Användarens kontext: ${ctx}`,
             editBucket={editBucket}
             setEditBucket={setEditBucket}
             saveBucket={saveBucket}
+          />
+        )}
+        {activeTab === 'cashflow' && (
+          <CashFlowView
+            monthlyIncome={monthlyIncome}
+            setMonthlyIncome={setMonthlyIncome}
+            debts={debts}
           />
         )}
         {activeTab === 'subs' && (
